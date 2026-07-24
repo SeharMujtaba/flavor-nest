@@ -1,8 +1,6 @@
 import Container from "@/components/common/Container";
 import RestaurantCard from "./RestaurantCard";
 import { restaurants } from "@/data/restaurants";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
 export default function Restaurants() {
   return (
@@ -14,21 +12,21 @@ export default function Restaurants() {
 
         bg-gradient-to-b
         from-white
-        via-[#FFFDFB]
-        to-[#FFF7F2]
+        via-orange-50/20
+        to-orange-100/20
 
-        py-36
+        py-32
       "
     >
-      {/* Left Glow */}
+      {/* Background Glow */}
       <div
         className="
           absolute
           -left-40
-          top-16
+          top-20
 
-          h-[340px]
-          w-[340px]
+          h-[320px]
+          w-[320px]
 
           rounded-full
 
@@ -38,28 +36,27 @@ export default function Restaurants() {
         "
       />
 
-      {/* Right Glow */}
       <div
         className="
           absolute
           -right-40
-          bottom-10
+          bottom-20
 
           h-[320px]
           w-[320px]
 
           rounded-full
 
-          bg-yellow-200/30
+          bg-orange-100/40
 
-          blur-[140px]
+          blur-[150px]
         "
       />
 
       <Container>
-        {/* Heading */}
+        {/* ================= HEADER ================= */}
 
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="mx-auto mb-20 max-w-6.5xl text-center">
 
           <span
             className="
@@ -67,44 +64,44 @@ export default function Restaurants() {
               items-center
               gap-2
 
-              rounded-full
+              rounded-[5px]
 
               border
-              border-orange-200
+              border-orange-400
 
-              bg-orange-50
+              bg-orange-400
 
-              px-6
-              py-3
+              px-5
+              py-2
 
-              text-2xl
+              text-lg
               font-bold
-
               uppercase
+              tracking-[0.18em]
 
-              text-orange-600
+              text-white
             "
           >
-            🍴 Top Restaurants
+            🍴 Featured Restaurants
           </span>
 
           <h2
             className="
-              mt-8
+              mt-6
 
-              text-4xl
+              text-5xl
               font-extrabold
-
               leading-tight
 
               text-slate-900
 
-              md:text-5xl
+              lg:text-6xl
             "
           >
-            Discover the Best
-            <span className="text-orange-500">
-              {" "}Restaurants
+            Discover Amazing
+
+            <span className="block text-orange-500">
+              Restaurants
             </span>
           </h2>
 
@@ -114,29 +111,26 @@ export default function Restaurants() {
 
               mt-6
 
-              max-w-3xl
+              max-w-6.5xl
 
               text-lg
               leading-8
 
-              text-slate-500
+              text-slate-600
             "
           >
-            From juicy burgers and authentic pizzas to spicy biryani,
-            explore Pakistan&apos;s most loved restaurants with quick
-            delivery, premium quality, and unforgettable taste.
+            Explore Pakistan&apos;s favourite restaurants serving burgers,
+            pizzas, biryani, desserts and much more with premium quality,
+            lightning-fast delivery and unforgettable flavours.
           </p>
 
         </div>
 
-        {/* Cards */}
+        {/* ================= CARDS ================= */}
 
         <div
           className="
-            mt-20
-
             grid
-
             gap-8
 
             md:grid-cols-2
@@ -150,57 +144,6 @@ export default function Restaurants() {
               restaurant={restaurant}
             />
           ))}
-        </div>
-
-        {/* View All */}
-
-        <div className="mt-20 flex justify-center">
-
-          <Link
-            href="/restaurants"
-            className="
-              group
-
-              inline-flex
-              items-center
-              gap-3
-
-              rounded-full
-
-              bg-orange-500
-
-              px-8
-              py-4
-
-              font-semibold
-
-              text-white
-
-              shadow-lg
-              shadow-orange-200
-
-              transition-all
-              duration-300
-
-              hover:-translate-y-1
-              hover:bg-orange-600
-              hover:shadow-xl
-            "
-          >
-            View All Restaurants
-
-            <ArrowRight
-              size={20}
-              className="
-                transition-transform
-                duration-300
-
-                group-hover:translate-x-1
-              "
-            />
-
-          </Link>
-
         </div>
 
       </Container>

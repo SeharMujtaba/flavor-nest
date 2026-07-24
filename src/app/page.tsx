@@ -9,25 +9,29 @@ export default function Home() {
     <>
       <Navbar />
 
-      <main className="overflow-hidden">
-        {/* Hero Section */}
+      <main className="overflow-x-hidden">
+
+        {/* Hero */}
         <Hero />
 
-        {/* Restaurants Section */}
-        <section className="mt-24 lg:mt-32">
-          <Restaurants />
-        </section>
-
-        {/* Categories Section */}
+        {/* Food Categories */}
         <section
           id="categories"
-          className="mt-24 lg:mt-32"
+          className="pt-24 lg:pt-28"
         >
           <Categories />
         </section>
+
+        {/* Restaurants */}
+        <section
+          id="restaurants"
+          className="pt-24 pb-24 lg:pt-28 lg:pb-32"
+        >
+          <Restaurants />
+        </section>
+
       </main>
 
-      {/* Footer */}
       <Footer />
     </>
   );

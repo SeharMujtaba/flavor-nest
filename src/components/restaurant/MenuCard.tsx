@@ -22,10 +22,13 @@ export default function MenuCard({
     <div
       className="
         group
+        flex
+        h-full
+        flex-col
 
         overflow-hidden
 
-        rounded-[28px]
+        rounded-xl
 
         border
         border-slate-200
@@ -38,25 +41,23 @@ export default function MenuCard({
         duration-300
 
         hover:-translate-y-2
-        hover:shadow-2xl
+        hover:shadow-xl
         hover:shadow-orange-100
       "
     >
       {/* Image */}
 
-      <div className="relative h-60 overflow-hidden">
+      <div className="relative h-52 overflow-hidden">
 
         <Image
           src={item.image}
           alt={item.name}
           fill
-          sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 25vw"
+          sizes="(max-width:768px)100vw,(max-width:1200px)50vw,25vw"
           className="
             object-cover
-
             transition-transform
             duration-500
-
             group-hover:scale-110
           "
         />
@@ -80,15 +81,15 @@ export default function MenuCard({
             px-3
             py-1.5
 
-            shadow-lg
+            shadow-md
           "
         >
           <Star
-            size={15}
+            size={14}
             className="fill-yellow-400 text-yellow-400"
           />
 
-          <span className="text-sm font-bold">
+          <span className="text-sm font-semibold">
             {item.rating}
           </span>
         </div>
@@ -102,8 +103,8 @@ export default function MenuCard({
             top-4
 
             flex
-            h-11
-            w-11
+            h-10
+            w-10
             items-center
             justify-center
 
@@ -111,14 +112,14 @@ export default function MenuCard({
 
             bg-white
 
-            shadow-lg
+            shadow-md
 
             transition-all
             duration-300
 
-            hover:scale-110
             hover:bg-red-500
             hover:text-white
+            hover:scale-110
           "
         >
           <Heart size={18} />
@@ -128,7 +129,7 @@ export default function MenuCard({
 
       {/* Content */}
 
-      <div className="p-6">
+      <div className="flex flex-1 flex-col p-5">
 
         <h3
           className="
@@ -140,14 +141,18 @@ export default function MenuCard({
           {item.name}
         </h3>
 
+        {/* Fixed Description Height */}
+
         <p
           className="
             mt-3
 
-            line-clamp-2
+            h-12
+
+            overflow-hidden
 
             text-sm
-            leading-7
+            leading-6
 
             text-slate-500
           "
@@ -157,23 +162,11 @@ export default function MenuCard({
 
         {/* Bottom */}
 
-        <div
-          className="
-            mt-8
+        <div className="mt-auto">
 
-            flex
-            items-center
-            justify-between
+          <div className="border-t border-slate-100 pt-5">
 
-            border-t
-            border-slate-100
-
-            pt-5
-          "
-        >
-          <div>
-
-            <p className="text-sm text-slate-400">
+            <p className="text-xs uppercase tracking-wider text-slate-400">
               Starting From
             </p>
 
@@ -182,7 +175,7 @@ export default function MenuCard({
                 mt-1
 
                 text-3xl
-                font-extrabold
+                font-bold
 
                 text-orange-500
               "
@@ -190,43 +183,45 @@ export default function MenuCard({
               Rs. {item.price}
             </h2>
 
+            <button
+              className="
+                mt-5
+
+                flex
+                h-11
+                w-full
+
+                items-center
+                justify-center
+                gap-2
+
+                rounded-lg
+
+                bg-orange-500
+
+                font-semibold
+
+                text-white
+
+                transition-all
+                duration-300
+
+                hover:bg-orange-600
+                hover:shadow-lg
+              "
+            >
+              <Plus size={18} />
+
+              Add to Cart
+
+            </button>
+
           </div>
-
-          <button
-            className="
-              flex
-              items-center
-              gap-2
-
-              rounded-2xl
-
-              bg-orange-500
-
-              px-5
-              py-3
-
-              font-semibold
-
-              text-white
-
-              shadow-lg
-
-              transition-all
-              duration-300
-
-              hover:-translate-y-1
-              hover:bg-orange-600
-              hover:shadow-xl
-            "
-          >
-            <Plus size={18} />
-
-            Add
-          </button>
 
         </div>
 
       </div>
+
     </div>
   );
 }

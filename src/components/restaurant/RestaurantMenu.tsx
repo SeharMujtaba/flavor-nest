@@ -27,7 +27,7 @@ export default function RestaurantMenu({
         from-[#FFFDFB]
         to-white
 
-        py-24
+        py-20
       "
     >
       {/* Background Glow */}
@@ -76,7 +76,7 @@ export default function RestaurantMenu({
               text-orange-600
             "
           >
-            🍔 Popular Dishes
+            🍽️ Popular Dishes
           </span>
 
           <h2
@@ -84,23 +84,23 @@ export default function RestaurantMenu({
               mt-6
 
               text-4xl
-              font-extrabold
+              font-bold
 
               text-slate-900
 
               md:text-5xl
             "
           >
-            {restaurant.name}
+            Explore
             <span className="text-orange-500">
-              {" "}Menu
+              {" "}
+              {restaurant.name}
             </span>
           </h2>
 
           <p
             className="
               mx-auto
-
               mt-5
 
               max-w-2xl
@@ -112,25 +112,23 @@ export default function RestaurantMenu({
             "
           >
             Freshly prepared meals made with premium ingredients and
-            delivered hot to your doorstep across Pakistan.
+            delivered hot and fresh to your doorstep.
           </p>
 
         </div>
 
-        {/* Menu */}
+        {/* Menu Grid */}
 
         {restaurantMenu.length > 0 ? (
 
           <div
             className="
-              mt-20
+              mt-16
 
               grid
-
               gap-8
 
               sm:grid-cols-2
-
               xl:grid-cols-4
             "
           >
@@ -147,12 +145,11 @@ export default function RestaurantMenu({
           <div
             className="
               mx-auto
+              mt-16
 
-              mt-20
+              max-w-xl
 
-              max-w-2xl
-
-              rounded-[32px]
+              rounded-xl
 
               border
               border-dashed
@@ -160,22 +157,22 @@ export default function RestaurantMenu({
 
               bg-white
 
-              p-16
+              p-14
 
               text-center
 
-              shadow-lg
+              shadow-sm
             "
           >
-            <div className="text-6xl">
+            <div className="text-5xl">
               🍽️
             </div>
 
             <h3
               className="
-                mt-6
+                mt-5
 
-                text-3xl
+                text-2xl
                 font-bold
 
                 text-slate-900
@@ -188,15 +185,13 @@ export default function RestaurantMenu({
               className="
                 mt-4
 
-                text-lg
-
-                leading-8
+                leading-7
 
                 text-slate-500
               "
             >
               This restaurant is currently updating its menu.
-              Please check back later for delicious meals.
+              Please visit again soon to explore delicious dishes.
             </p>
 
           </div>

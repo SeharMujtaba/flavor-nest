@@ -10,19 +10,19 @@ const links = [
   },
   {
     name: "Restaurants",
-    href: "/restaurants/1",
+    href: "/restaurants",
   },
   {
     name: "Categories",
-    href: "#categories",
+    href: "/categories",
   },
   {
     name: "Offers",
-    href: "#offers",
+    href: "/offers",
   },
   {
     name: "Contact",
-    href: "#contact",
+    href: "/contact",
   },
 ];
 

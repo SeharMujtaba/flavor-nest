@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Bike, Clock, MapPin, Star } from "lucide-react";
+import {
+  ArrowRight,
+  Bike,
+  Clock,
+  MapPin,
+  Star,
+} from "lucide-react";
 
 type Restaurant = {
   id: number;
@@ -20,14 +26,15 @@ export default function RestaurantCard({
   restaurant,
 }: RestaurantCardProps) {
   return (
-    <Link href={`/restaurants/${restaurant.id}`}>
+    <Link
+      href={`/restaurants/${restaurant.id}`}
+      className="group block"
+    >
       <div
         className="
-          group
-          relative
           overflow-hidden
 
-          rounded-[30px]
+          rounded-xl
 
           border
           border-slate-200
@@ -40,24 +47,34 @@ export default function RestaurantCard({
           duration-300
 
           hover:-translate-y-2
-          hover:shadow-2xl
+          hover:border-orange-200
+          hover:shadow-xl
           hover:shadow-orange-100
-
-          cursor-pointer
         "
       >
         {/* Image */}
-        <div className="relative h-60 overflow-hidden rounded-t-[30px]">
+        <div
+          className="
+            relative
+            h-44
+
+            overflow-hidden
+
+            rounded-t-xl
+          "
+        >
           <Image
             src={restaurant.image}
             alt={restaurant.name}
             fill
-            sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+            sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
             className="
               object-cover
+
               transition-transform
               duration-500
-              group-hover:scale-110
+
+              group-hover:scale-105
             "
           />
 
@@ -77,9 +94,9 @@ export default function RestaurantCard({
               bg-white/95
 
               px-3
-              py-1.5
+              py-1
 
-              shadow-lg
+              shadow-md
             "
           >
             <Star
@@ -87,96 +104,98 @@ export default function RestaurantCard({
               className="fill-yellow-400 text-yellow-400"
             />
 
-            <span className="text-sm font-bold">
+            <span className="text-sm font-semibold text-slate-800">
               {restaurant.rating}
             </span>
           </div>
         </div>
 
         {/* Content */}
-        <div className="relative p-6">
-          {/* Arrow Button */}
+        <div className="relative px-5 pt-5 pb-5">
+
+          {/* Floating Arrow */}
           <div
             className="
               absolute
-              -top-9
-              right-6
+              -top-7
+              right-5
 
               flex
-              h-14
-              w-14
+              h-12
+              w-12
               items-center
               justify-center
 
-              rounded-2xl
+              rounded-xl
 
               bg-orange-500
 
               text-white
 
-              shadow-xl
+              shadow-lg
               shadow-orange-200
 
               transition-all
               duration-300
 
-              group-hover:scale-110
+              group-hover:translate-x-1
               group-hover:-translate-y-1
             "
           >
-            <ArrowRight size={24} />
+            <ArrowRight size={20} />
           </div>
 
-          <h3
-            className="
-              pr-16
+          <div className="pr-14">
+            <h3
+              className="
+                text-2xl
+                font-bold
+                leading-tight
+                text-slate-900
+              "
+            >
+              {restaurant.name}
+            </h3>
 
-              text-2xl
-              font-bold
+            <p
+              className="
+                mt-2
 
-              text-slate-900
-            "
-          >
-            {restaurant.name}
-          </h3>
+                text-sm
 
-          <p
-            className="
-              mt-2
-
-              text-sm
-
-              text-slate-500
-            "
-          >
-            {restaurant.cuisine}
-          </p>
+                text-slate-500
+              "
+            >
+              {restaurant.cuisine}
+            </p>
+          </div>
 
           {/* Location */}
           <div
             className="
-              mt-5
+              mt-4
 
               flex
               items-center
               gap-2
 
               text-sm
+
               text-slate-600
             "
           >
             <MapPin
-              size={16}
+              size={15}
               className="text-orange-500"
             />
 
-            {restaurant.city}
+            <span>{restaurant.city}</span>
           </div>
 
           {/* Bottom */}
           <div
             className="
-              mt-6
+              mt-5
 
               flex
               items-center
@@ -185,7 +204,7 @@ export default function RestaurantCard({
               border-t
               border-slate-100
 
-              pt-5
+              pt-4
             "
           >
             <div
@@ -193,18 +212,16 @@ export default function RestaurantCard({
                 flex
                 items-center
                 gap-2
-
-                text-sm
-
-                text-slate-600
               "
             >
               <Clock
-                size={16}
+                size={15}
                 className="text-orange-500"
               />
 
-              {restaurant.deliveryTime}
+              <span className="text-sm text-slate-600">
+                {restaurant.deliveryTime}
+              </span>
             </div>
 
             <div
@@ -214,13 +231,12 @@ export default function RestaurantCard({
                 gap-2
 
                 text-sm
-
                 font-medium
 
                 text-emerald-600
               "
             >
-              <Bike size={16} />
+              <Bike size={15} />
 
               Free Delivery
             </div>

@@ -104,7 +104,7 @@ export default function Categories() {
             relative
             z-10
             mx-auto
-            max-w-3xl
+            max-w-6.5xl
             text-center
           "
         >
@@ -113,19 +113,19 @@ export default function Categories() {
               inline-flex
               items-center
 
-              rounded-full
+              rounded-[5px]
 
-              bg-orange-100
+              bg-orange-500
 
               px-5
               py-2.5
 
-              text-3xl
-              font-semibold
+              text-lg
+              font-bold
 
               tracking-wide
 
-              text-orange-600
+              text-white
             "
           >
             🍽 Explore Categories
@@ -153,8 +153,9 @@ export default function Categories() {
             className="
               mx-auto
               mt-6
-              max-w-2xl
+              max-w-6xl
 
+              text-align-center
               text-lg
               leading-8
 
