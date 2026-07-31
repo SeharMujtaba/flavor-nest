@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
+import { Toaster } from "react-hot-toast";
+
 import "./globals.css";
+
+import { CartProvider } from "@/context/CartContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,13 +29,39 @@ export default function RootLayout({
 }>) {
   return (
     <html
-  lang="en"
-  data-scroll-behavior="smooth"
->
+      lang="en"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <body
-        className={`${inter.variable} ${poppins.variable} antialiased`}
+        className={`${inter.variable} ${poppins.variable} antialiased bg-[#FAFAF7] text-slate-900`}
       >
-        {children}
+        <CartProvider>
+          {/* Toast Notifications */}
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={{
+              duration: 2000,
+              style: {
+                background: "#16a34a",
+                color: "#ffffff",
+                borderRadius: "12px",
+                padding: "14px 18px",
+                fontWeight: "600",
+                fontSize: "15px",
+              },
+              success: {
+                iconTheme: {
+                  primary: "#ffffff",
+                  secondary: "#16a34a",
+                },
+              },
+            }}
+          />
+
+          {children}
+        </CartProvider>
       </body>
     </html>
   );

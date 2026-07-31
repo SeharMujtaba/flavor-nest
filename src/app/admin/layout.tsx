@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   LayoutDashboard,
@@ -11,6 +12,7 @@ import {
   Settings,
   BarChart3,
   ChefHat,
+  LogOut,
 } from "lucide-react";
 
 type AdminLayoutProps = {
@@ -54,6 +56,47 @@ export default function AdminLayout({
   children,
 }: AdminLayoutProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
+
+  // Don't protect login page
+  const isLoginPage = pathname === "/admin/login";
+
+  useEffect(() => {
+    if (isLoginPage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false);
+      return;
+    }
+
+    const loggedIn =
+      localStorage.getItem("adminLoggedIn") === "true";
+
+    if (!loggedIn) {
+      router.replace("/admin/login");
+    } else {
+      setLoading(false);
+    }
+  }, [router, isLoginPage]);
+
+  const logout = () => {
+    localStorage.removeItem("adminLoggedIn");
+    router.replace("/admin/login");
+  };
+
+  // Show only login page
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -67,14 +110,10 @@ export default function AdminLayout({
             hidden
             w-80
             shrink-0
-
             border-r
             border-slate-200
-
             bg-white
-
             shadow-xl
-
             lg:flex
             lg:flex-col
           "
@@ -93,15 +132,11 @@ export default function AdminLayout({
                   w-14
                   items-center
                   justify-center
-
                   rounded-2xl
-
                   bg-gradient-to-br
                   from-orange-500
                   to-red-500
-
                   text-white
-
                   shadow-lg
                 "
               >
@@ -135,7 +170,6 @@ export default function AdminLayout({
               const active = pathname === item.href;
 
               return (
-
                 <Link
                   key={item.name}
                   href={item.href}
@@ -144,15 +178,11 @@ export default function AdminLayout({
                     flex
                     items-center
                     gap-4
-
                     rounded-2xl
-
                     px-5
                     py-4
-
                     transition-all
                     duration-300
-
                     ${
                       active
                         ? "bg-orange-500 text-white shadow-lg"
@@ -168,11 +198,8 @@ export default function AdminLayout({
                       w-11
                       items-center
                       justify-center
-
                       rounded-xl
-
                       transition-all
-
                       ${
                         active
                           ? "bg-white/20"
@@ -180,9 +207,7 @@ export default function AdminLayout({
                       }
                     `}
                   >
-
                     <Icon size={22} />
-
                   </div>
 
                   <span className="font-semibold">
@@ -190,39 +215,61 @@ export default function AdminLayout({
                   </span>
 
                 </Link>
-
               );
-
             })}
 
           </nav>
 
+          {/* Logout */}
+
+          <div className="border-t border-slate-200 p-6">
+
+            <button
+              onClick={logout}
+              className="
+                flex
+                w-full
+                items-center
+                justify-center
+                gap-3
+                rounded-2xl
+                bg-red-50
+                px-5
+                py-4
+                font-semibold
+                text-red-600
+                transition
+                hover:bg-red-500
+                hover:text-white
+              "
+            >
+              <LogOut size={20} />
+              Logout
+            </button>
+
+          </div>
+
         </aside>
 
-        {/* Main Content */}
+        {/* Main */}
 
         <div className="flex-1">
 
-          {/* Topbar */}
+          {/* Header */}
 
           <header
             className="
               sticky
               top-0
               z-40
-
               flex
               h-20
               items-center
               justify-between
-
               border-b
               border-slate-200
-
               bg-white/90
-
               px-10
-
               backdrop-blur-md
             "
           >
@@ -239,29 +286,52 @@ export default function AdminLayout({
 
             </div>
 
-            <div
-              className="
-                flex
-                h-12
-                w-12
-                items-center
-                justify-center
+            <div className="flex items-center gap-4">
 
-                rounded-full
+              <div
+                className="
+                  flex
+                  h-12
+                  w-12
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-orange-500
+                  font-bold
+                  text-white
+                "
+              >
+                A
+              </div>
 
-                bg-orange-500
+              <button
+                onClick={logout}
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  rounded-xl
+                  border
+                  border-red-200
+                  bg-red-50
+                  px-4
+                  py-2
+                  font-semibold
+                  text-red-600
+                  transition
+                  hover:bg-red-500
+                  hover:text-white
+                "
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
 
-                font-bold
-
-                text-white
-              "
-            >
-              A
             </div>
 
           </header>
 
-          {/* Page Content */}
+          {/* Content */}
 
           <main className="p-10">
             {children}

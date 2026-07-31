@@ -1,5 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import { Heart, Plus, Star } from "lucide-react";
+import { toast } from "react-hot-toast";
+
+import { useCart } from "@/context/CartContext";
 
 type MenuItem = {
   id: number;
@@ -18,6 +23,23 @@ type MenuCardProps = {
 export default function MenuCard({
   item,
 }: MenuCardProps) {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      description: item.description,
+      price: item.price,
+    });
+
+    toast.success(`${item.name} added to cart!`, {
+      duration: 2000,
+      position: "top-right",
+    });
+  };
+
   return (
     <div
       className="
@@ -25,21 +47,14 @@ export default function MenuCard({
         flex
         h-full
         flex-col
-
         overflow-hidden
-
         rounded-xl
-
         border
         border-slate-200
-
         bg-white
-
         shadow-sm
-
         transition-all
         duration-300
-
         hover:-translate-y-2
         hover:shadow-xl
         hover:shadow-orange-100
@@ -62,61 +77,31 @@ export default function MenuCard({
           "
         />
 
-        {/* Rating */}
-
-        <div
-          className="
-            absolute
-            left-4
-            top-4
-
-            flex
-            items-center
-            gap-1
-
-            rounded-full
-
-            bg-white
-
-            px-3
-            py-1.5
-
-            shadow-md
-          "
-        >
+        <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-white px-3 py-1.5 shadow-md">
           <Star
             size={14}
             className="fill-yellow-400 text-yellow-400"
           />
-
           <span className="text-sm font-semibold">
             {item.rating}
           </span>
         </div>
-
-        {/* Favourite */}
 
         <button
           className="
             absolute
             right-4
             top-4
-
             flex
             h-10
             w-10
             items-center
             justify-center
-
             rounded-full
-
             bg-white
-
             shadow-md
-
             transition-all
             duration-300
-
             hover:bg-red-500
             hover:text-white
             hover:scale-110
@@ -131,36 +116,22 @@ export default function MenuCard({
 
       <div className="flex flex-1 flex-col p-5">
 
-        <h3
-          className="
-            text-xl
-            font-bold
-            text-slate-900
-          "
-        >
+        <h3 className="text-xl font-bold text-slate-900">
           {item.name}
         </h3>
-
-        {/* Fixed Description Height */}
 
         <p
           className="
             mt-3
-
             h-12
-
             overflow-hidden
-
             text-sm
             leading-6
-
             text-slate-500
           "
         >
           {item.description}
         </p>
-
-        {/* Bottom */}
 
         <div className="mt-auto">
 
@@ -170,50 +141,32 @@ export default function MenuCard({
               Starting From
             </p>
 
-            <h2
-              className="
-                mt-1
-
-                text-3xl
-                font-bold
-
-                text-orange-500
-              "
-            >
+            <h2 className="mt-1 text-3xl font-bold text-orange-500">
               Rs. {item.price}
             </h2>
 
             <button
+              onClick={handleAddToCart}
               className="
                 mt-5
-
                 flex
                 h-11
                 w-full
-
                 items-center
                 justify-center
                 gap-2
-
                 rounded-lg
-
                 bg-orange-500
-
                 font-semibold
-
                 text-white
-
                 transition-all
                 duration-300
-
                 hover:bg-orange-600
                 hover:shadow-lg
               "
             >
               <Plus size={18} />
-
               Add to Cart
-
             </button>
 
           </div>

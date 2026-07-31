@@ -1,6 +1,6 @@
 export const menu = [
   // ==========================
-  // BURGERS
+  // BURGERS (Burger House)
   // ==========================
 
   {
@@ -9,7 +9,8 @@ export const menu = [
     category: "burgers",
     name: "Classic Cheeseburger",
     image: "/images/menu/burger1.jpg",
-    description: "Juicy halal beef with cheddar cheese and fresh vegetables.",
+    description:
+      "Juicy halal beef with cheddar cheese and fresh vegetables.",
     price: 899,
     rating: 4.8,
   },
@@ -20,7 +21,8 @@ export const menu = [
     category: "burgers",
     name: "Double Beef Burger",
     image: "/images/menu/burger2.jpg",
-    description: "Double beef patties with signature sauce.",
+    description:
+      "Double beef patties with signature sauce.",
     price: 1299,
     rating: 4.9,
   },
@@ -31,7 +33,8 @@ export const menu = [
     category: "burgers",
     name: "Chicken Burger",
     image: "/images/menu/burger3.jpg",
-    description: "Crispy chicken burger with lettuce and mayo.",
+    description:
+      "Crispy chicken burger with lettuce and mayo.",
     price: 799,
     rating: 4.7,
   },
@@ -42,13 +45,14 @@ export const menu = [
     category: "burgers",
     name: "French Fries",
     image: "/images/menu/fries.jpg",
-    description: "Golden crispy fries with ketchup.",
+    description:
+      "Golden crispy fries with ketchup.",
     price: 399,
     rating: 4.6,
   },
 
   // ==========================
-  // PIZZA
+  // PIZZA (Pizza Point)
   // ==========================
 
   {
@@ -57,7 +61,8 @@ export const menu = [
     category: "pizza",
     name: "Pepperoni Pizza",
     image: "/images/menu/pizza1.jpg",
-    description: "Loaded with mozzarella and pepperoni.",
+    description:
+      "Loaded with mozzarella and pepperoni.",
     price: 1699,
     rating: 4.9,
   },
@@ -68,65 +73,70 @@ export const menu = [
     category: "pizza",
     name: "Chicken Fajita Pizza",
     image: "/images/menu/pizza2.jpg",
-    description: "Chicken, capsicum and mozzarella.",
+    description:
+      "Chicken, capsicum and mozzarella.",
     price: 1599,
     rating: 4.8,
   },
 
   // ==========================
-  // CHINESE
+  // CHINESE (Chinese Wok)
   // ==========================
 
   {
     id: 7,
-    restaurantId: 3,
+    restaurantId: 4,
     category: "chinese",
     name: "Chicken Chow Mein",
     image: "/images/menu/chowmein.jpg",
-    description: "Stir-fried noodles with chicken and vegetables.",
+    description:
+      "Stir-fried noodles with chicken and vegetables.",
     price: 899,
     rating: 4.7,
   },
 
   {
     id: 8,
-    restaurantId: 3,
+    restaurantId: 4,
     category: "chinese",
     name: "Chicken Fried Rice",
     image: "/images/menu/fried-rice.jpg",
-    description: "Classic Chinese fried rice.",
+    description:
+      "Classic Chinese fried rice.",
     price: 799,
     rating: 4.8,
   },
 
   // ==========================
-  // PAKISTANI
+  // PAKISTANI (Biryani Express)
   // ==========================
 
   {
     id: 9,
-    restaurantId: 4,
+    restaurantId: 6,
     category: "pakistani",
     name: "Chicken Biryani",
     image: "/images/menu/biryani.jpg",
-    description: "Traditional Karachi style chicken biryani.",
+    description:
+      "Traditional Karachi style chicken biryani.",
     price: 699,
     rating: 4.9,
   },
 
   {
     id: 10,
-    restaurantId: 4,
+    restaurantId: 6,
     category: "pakistani",
     name: "Chicken Karahi",
     image: "/images/menu/karahi.jpg",
-    description: "Spicy chicken karahi cooked in tomato gravy.",
+    description:
+      "Spicy chicken karahi cooked in tomato gravy.",
     price: 1499,
     rating: 4.8,
   },
 
   // ==========================
-  // ITALIAN
+  // ITALIAN (Cafe Delight)
   // ==========================
 
   {
@@ -135,7 +145,8 @@ export const menu = [
     category: "italian",
     name: "Creamy Alfredo Pasta",
     image: "/images/menu/alfredo.jpg",
-    description: "Creamy pasta with grilled chicken.",
+    description:
+      "Creamy pasta with grilled chicken.",
     price: 1199,
     rating: 4.8,
   },
@@ -146,85 +157,91 @@ export const menu = [
     category: "italian",
     name: "Lasagna",
     image: "/images/menu/lasagna.jpg",
-    description: "Layers of pasta with rich meat sauce.",
+    description:
+      "Layers of pasta with rich meat sauce.",
     price: 1399,
     rating: 4.9,
   },
-
-  // ==========================
-  // BBQ
+    // ==========================
+  // BBQ (Spice Garden)
   // ==========================
 
   {
     id: 13,
-    restaurantId: 6,
+    restaurantId: 3,
     category: "bbq",
     name: "Chicken Tikka",
     image: "/images/menu/tikka.jpg",
-    description: "Charcoal grilled chicken tikka.",
+    description:
+      "Charcoal grilled chicken tikka.",
     price: 599,
     rating: 4.8,
   },
 
   {
     id: 14,
-    restaurantId: 6,
+    restaurantId: 3,
     category: "bbq",
     name: "Seekh Kebab",
     image: "/images/menu/seekh-kebab.jpg",
-    description: "Juicy beef seekh kebabs.",
+    description:
+      "Juicy beef seekh kebabs.",
     price: 699,
     rating: 4.9,
   },
 
   // ==========================
-  // DESSERTS
+  // DESSERTS (Cafe Delight)
   // ==========================
 
   {
     id: 15,
-    restaurantId: 7,
+    restaurantId: 5,
     category: "desserts",
     name: "Chocolate Brownie",
     image: "/images/menu/brownie.jpg",
-    description: "Rich chocolate brownie served warm.",
+    description:
+      "Rich chocolate brownie served warm.",
     price: 499,
     rating: 4.8,
   },
 
   {
     id: 16,
-    restaurantId: 7,
+    restaurantId: 5,
     category: "desserts",
     name: "Ice Cream Sundae",
     image: "/images/menu/sundae.jpg",
-    description: "Vanilla ice cream with chocolate syrup.",
+    description:
+      "Vanilla ice cream with chocolate syrup.",
     price: 599,
     rating: 4.9,
   },
 
   // ==========================
-  // DRINKS
+  // DRINKS (Cafe Delight)
   // ==========================
 
   {
     id: 17,
-    restaurantId: 8,
+    restaurantId: 5,
     category: "drinks",
     name: "Fresh Mango Shake",
     image: "/images/menu/mango-shake.jpg",
-    description: "Fresh mangoes blended with milk.",
+    description:
+      "Fresh mangoes blended with milk.",
     price: 399,
     rating: 4.9,
   },
 
   {
     id: 18,
-    restaurantId: 8,
+    restaurantId: 5,
     category: "drinks",
     name: "Cold Coffee",
     image: "/images/menu/cold-coffee.jpg",
-    description: "Creamy chilled coffee with whipped cream.",
+    description:
+      "Creamy chilled coffee with whipped cream.",
     price: 449,
     rating: 4.8,
   },

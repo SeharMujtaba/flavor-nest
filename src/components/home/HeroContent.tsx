@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import HeroSearch from "./HeroSearch";
 import HeroStats from "./HeroStats";
 import { Button } from "@/components/ui/button";
@@ -11,8 +13,8 @@ export default function HeroContent() {
         lg:px-0
       "
     >
-
       {/* Badge */}
+
       <div
         className="
           inline-flex
@@ -34,9 +36,7 @@ export default function HeroContent() {
           backdrop-blur
         "
       >
-        <span className="text-lg">
-          ⭐
-        </span>
+        <span className="text-lg">⭐</span>
 
         <span
           className="
@@ -47,11 +47,10 @@ export default function HeroContent() {
         >
           Trusted by 50,000+ Happy Customers
         </span>
-
       </div>
 
-
       {/* Heading */}
+
       <h1
         className="
           mt-8
@@ -71,27 +70,21 @@ export default function HeroContent() {
           lg:text-7xl
         "
       >
-
         Fresh Food
 
         <br />
 
-        <span
-          className="
-            text-orange-500
-          "
-        >
+        <span className="text-orange-500">
           Delivered
         </span>
 
         <br />
 
         Fast.
-
       </h1>
 
-
       {/* Description */}
+
       <p
         className="
           mt-7
@@ -110,8 +103,8 @@ export default function HeroContent() {
         Fast delivery, trusted restaurants, and unforgettable taste.
       </p>
 
-
       {/* Search */}
+
       <div
         className="
           mt-10
@@ -122,8 +115,8 @@ export default function HeroContent() {
         <HeroSearch />
       </div>
 
-
       {/* Buttons */}
+
       <div
         className="
           mt-10
@@ -137,6 +130,7 @@ export default function HeroContent() {
           sm:items-center
         "
       >
+        {/* Order Now */}
 
         <Button
           className="
@@ -166,9 +160,12 @@ export default function HeroContent() {
             hover:shadow-xl
           "
         >
-          Order Now →
+          <Link href="/restaurants">
+            Order Now →
+          </Link>
         </Button>
 
+        {/* Explore Menu */}
 
         <Button
           variant="outline"
@@ -178,6 +175,8 @@ export default function HeroContent() {
 
             rounded-full
 
+            border-0
+
             bg-gradient-to-r
             from-orange-500
             to-orange-600
@@ -197,16 +196,17 @@ export default function HeroContent() {
 
             hover:-translate-y-1
             hover:shadow-xl
+            hover:text-white
           "
         >
-          Explore Menu
+          <Link href="/restaurants">
+            Explore Menu
+          </Link>
         </Button>
-
-
       </div>
 
-
       {/* Statistics */}
+
       <div
         className="
           mt-14
@@ -216,8 +216,6 @@ export default function HeroContent() {
       >
         <HeroStats />
       </div>
-
-
     </div>
   );
 }
