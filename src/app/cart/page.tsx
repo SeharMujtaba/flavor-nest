@@ -196,7 +196,7 @@ export default function CartPage() {
                         <div className="flex items-center rounded-2xl border border-slate-200 bg-slate-50">
 
                           <button
-                            onClick={() => decreaseQuantity(item.id)}
+                            onClick={() => decreaseQuantity(Number(item.id))}
                             className="rounded-l-2xl p-3 transition hover:bg-orange-100"
                           >
                             <Minus size={18} />
@@ -207,7 +207,7 @@ export default function CartPage() {
                           </span>
 
                           <button
-                            onClick={() => increaseQuantity(item.id)}
+                            onClick={() => increaseQuantity(Number(item.id))}
                             className="rounded-r-2xl p-3 transition hover:bg-orange-100"
                           >
                             <Plus size={18} />
@@ -218,7 +218,7 @@ export default function CartPage() {
                         {/* Remove */}
 
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCart(Number(item.id))}
                           className="inline-flex items-center gap-2 rounded-xl bg-red-50 px-4 py-3 font-semibold text-red-600 transition hover:bg-red-500 hover:text-white"
                         >
                           <Trash2 size={18} />
