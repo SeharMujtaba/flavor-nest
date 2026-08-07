@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 type Restaurant = {
-  id: number;
+  id: string | number;
   name: string;
   image: string;
   cover: string;

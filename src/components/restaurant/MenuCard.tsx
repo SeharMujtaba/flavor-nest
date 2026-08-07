@@ -7,8 +7,9 @@ import { toast } from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
 
 type MenuItem = {
-  id: number;
-  restaurantId: number;
+  id: string | number;
+  restaurantId:string  ;
+  category?: string;
   name: string;
   image: string;
   description: string;
@@ -41,34 +42,37 @@ export default function MenuCard({
   };
 
   return (
-    <div
+    <article
       className="
         group
         flex
         h-full
         flex-col
         overflow-hidden
-        rounded-xl
+        rounded-2xl
         border
-        border-slate-200
+        border-slate-100
         bg-white
         shadow-sm
         transition-all
         duration-300
-        hover:-translate-y-2
+        hover:-translate-y-1
         hover:shadow-xl
-        hover:shadow-orange-100
       "
     >
       {/* Image */}
-
-      <div className="relative h-52 overflow-hidden">
-
+      <div className="relative h-52 overflow-hidden bg-slate-100">
         <Image
-          src={item.image}
+          src={
+            item.image || "/images/placeholder.jpg"
+          }
           alt={item.name}
           fill
-          sizes="(max-width:768px)100vw,(max-width:1200px)50vw,25vw"
+          sizes="
+            (max-width: 640px) 100vw,
+            (max-width: 1024px) 50vw,
+            25vw
+          "
           className="
             object-cover
             transition-transform
@@ -77,17 +81,51 @@ export default function MenuCard({
           "
         />
 
-        <div className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-white px-3 py-1.5 shadow-md">
+        {/* Dark overlay */}
+        <div
+          className="
+            absolute
+            inset-0
+            bg-gradient-to-t
+            from-black/20
+            via-transparent
+            to-transparent
+          "
+        />
+
+        {/* Rating */}
+        <div
+          className="
+            absolute
+            left-4
+            top-4
+            flex
+            items-center
+            gap-1
+            rounded-full
+            bg-white
+            px-3
+            py-1.5
+            shadow-md
+          "
+        >
           <Star
             size={14}
             className="fill-yellow-400 text-yellow-400"
           />
-          <span className="text-sm font-semibold">
-            {item.rating}
+
+          <span className="text-sm font-semibold text-slate-800">
+            {item.rating > 0
+              ? item.rating.toFixed(1)
+              : "New"}
           </span>
         </div>
 
+        {/* Wishlist */}
         <button
+          type="button"
+          aria-label={`Add ${item.name} to wishlist`}
+          title="Add to wishlist"
           className="
             absolute
             right-4
@@ -99,53 +137,62 @@ export default function MenuCard({
             justify-center
             rounded-full
             bg-white
+            text-slate-700
             shadow-md
             transition-all
             duration-300
+            hover:scale-110
             hover:bg-red-500
             hover:text-white
-            hover:scale-110
           "
         >
           <Heart size={18} />
         </button>
-
       </div>
 
       {/* Content */}
-
       <div className="flex flex-1 flex-col p-5">
+        {/* Category */}
+        {item.category && (
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-orange-500">
+            {item.category}
+          </p>
+        )}
 
-        <h3 className="text-xl font-bold text-slate-900">
+        {/* Name */}
+        <h3 className="line-clamp-1 text-xl font-bold text-slate-900">
           {item.name}
         </h3>
 
+        {/* Description */}
         <p
           className="
             mt-3
-            h-12
+            min-h-[48px]
             overflow-hidden
             text-sm
             leading-6
             text-slate-500
           "
         >
-          {item.description}
+          {item.description ||
+            "Delicious food prepared fresh for you."}
         </p>
 
-        <div className="mt-auto">
-
+        {/* Bottom */}
+        <div className="mt-auto pt-5">
           <div className="border-t border-slate-100 pt-5">
-
             <p className="text-xs uppercase tracking-wider text-slate-400">
               Starting From
             </p>
 
             <h2 className="mt-1 text-3xl font-bold text-orange-500">
-              Rs. {item.price}
+              Rs. {item.price.toLocaleString()}
             </h2>
 
+            {/* Add to Cart */}
             <button
+              type="button"
               onClick={handleAddToCart}
               className="
                 mt-5
@@ -163,18 +210,15 @@ export default function MenuCard({
                 duration-300
                 hover:bg-orange-600
                 hover:shadow-lg
+                active:scale-[0.98]
               "
             >
               <Plus size={18} />
               Add to Cart
             </button>
-
           </div>
-
         </div>
-
       </div>
-
-    </div>
+    </article>
   );
 }

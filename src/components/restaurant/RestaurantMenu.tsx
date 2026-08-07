@@ -10,7 +10,7 @@ type Restaurant = {
 };
 
 type Product = {
-  _id: string;
+  _id: string | number;
   name: string;
   description?: string;
   price: number;
@@ -149,7 +149,7 @@ export default function RestaurantMenu({
                   key={product._id}
                   item={{
                     id: product._id,
-                    restaurantId: restaurant.id,
+                    restaurantId: restaurant.id.toString(),
                     category:
                       product.category || "",
                     name: product.name,

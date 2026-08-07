@@ -10,7 +10,7 @@ import { categories } from "@/data/categories";
 import MenuCard from "@/components/restaurant/MenuCard";
 
 type Product = {
-  _id: string;
+  _id: number | string ;
   name: string;
   description: string;
   price: number;
@@ -75,8 +75,8 @@ export default async function CategoryPage({
   if (!category) {
     return (
       <main className="min-h-screen bg-slate-50 px-6 py-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-extrabold text-slate-900">
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="text-5xl font-extrabold text-slate-900">
             Category Not Found
           </h1>
 
@@ -124,14 +124,16 @@ export default async function CategoryPage({
   return (
     <main className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <section className="relative h-[360px] overflow-hidden">
-        <Image
-          src={category.image}
-          alt={category.name}
-          fill
-          priority
-          className="object-cover"
-        />
+      <section className="relative h-[500px] overflow-hidden bg-slate-900">
+        {category.image && (
+          <Image
+            src={category.image}
+            alt={category.name}
+            fill
+            priority
+            className="object-cover"
+          />
+        )}
 
         <div
           className="
@@ -237,7 +239,8 @@ export default async function CategoryPage({
                   key={product._id}
                   item={{
                     id: product._id,
-                    restaurantId: 0,
+                    restaurantId: "",
+
                     category: product.category,
                     name: product.name,
                     image: product.image,
