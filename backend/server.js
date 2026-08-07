@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-require-imports */
+
 require("dotenv").config();
 
 const express = require("express");
@@ -16,9 +17,14 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-const FRONTEND_URL =
-  process.env.FRONTEND_URL ||
-  "http://localhost:3000";
+// -------------------------
+// Allowed Frontend Origins
+// -------------------------
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://flavor-nest-sage.vercel.app",
+];
 
 // -------------------------
 // Middleware
@@ -26,7 +32,24 @@ const FRONTEND_URL =
 
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: function (origin, callback) {
+      // Allow requests with no origin
+      // such as Postman/server-to-server requests
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log("CORS blocked origin:", origin);
+
+      return callback(
+        new Error("Not allowed by CORS")
+      );
+    },
+
     credentials: true,
   })
 );
