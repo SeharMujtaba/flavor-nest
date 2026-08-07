@@ -1,226 +1,375 @@
+"use client";
+
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function AddProductPage() {
+  const router = useRouter();
+
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    rating: "",
+    category: "",
+    restaurant: "",
+    image: "",
+    available: true,
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (
+    e: FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    setError("");
+
+    if (!form.name.trim()) {
+      setError("Product name is required.");
+      return;
+    }
+
+    if (!form.price || Number(form.price) < 0) {
+      setError("Please enter a valid price.");
+      return;
+    }
+
+    if (!form.category.trim()) {
+      setError("Category is required.");
+      return;
+    }
+
+    if (!form.restaurant.trim()) {
+      setError("Restaurant is required.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `${API_URL}/api/products`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            description: form.description.trim(),
+            price: Number(form.price),
+            rating: form.rating
+              ? Number(form.rating)
+              : 0,
+            category: form.category.trim(),
+            restaurant: form.restaurant.trim(),
+            image: form.image.trim(),
+            available: form.available,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to create product"
+        );
+      }
+
+      alert("Product created successfully!");
+
+      router.push("/admin/products");
+      router.refresh();
+    } catch (error) {
+      console.error("Create product error:", error);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to create product"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-4xl space-y-8">
 
       {/* Header */}
 
-      <div className="mb-10 flex items-center justify-between">
+      <div className="flex items-center gap-4">
+
+        <Link
+          href="/admin/products"
+          className="rounded-xl border border-slate-300 bg-white p-3 text-slate-700 transition hover:border-orange-500 hover:text-orange-500"
+        >
+          <ArrowLeft size={20} />
+        </Link>
 
         <div>
-
           <h1 className="text-4xl font-extrabold text-slate-900">
             Add Product
           </h1>
 
           <p className="mt-2 text-slate-500">
-            Create a new menu item for your restaurant.
+            Add a new food item to FlavorNest.
           </p>
-
         </div>
 
-        <Link
-          href="/admin/products"
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold transition hover:border-orange-400 hover:text-orange-500"
-        >
-          <ArrowLeft size={18} />
-          Back
-        </Link>
-
       </div>
+
+      {/* Error */}
+
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+          <p className="font-semibold">
+            {error}
+          </p>
+        </div>
+      )}
 
       {/* Form */}
 
-      <div className="rounded-3xl bg-white p-10 shadow-sm">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 rounded-2xl bg-white p-6 shadow-sm md:p-8"
+      >
 
-        <form className="space-y-8">
+        {/* Name */}
 
-          {/* Product Name */}
+        <div>
+          <label
+            htmlFor="name"
+            className="mb-2 block font-semibold text-slate-800"
+          >
+            Product Name *
+          </label>
+
+          <input
+            id="name"
+            name="name"
+            type="text"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="e.g. Chicken Burger"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
+          />
+        </div>
+
+        {/* Description */}
+
+        <div>
+          <label
+            htmlFor="description"
+            className="mb-2 block font-semibold text-slate-800"
+          >
+            Description
+          </label>
+
+          <textarea
+            id="description"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            rows={4}
+            placeholder="Describe the food item..."
+            className="w-full resize-none rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
+          />
+        </div>
+
+        {/* Price + Rating */}
+
+        <div className="grid gap-6 md:grid-cols-2">
 
           <div>
-
-            <label className="mb-2 block font-semibold">
-              Product Name
+            <label
+              htmlFor="price"
+              className="mb-2 block font-semibold text-slate-800"
+            >
+              Price (Rs.) *
             </label>
 
             <input
-              type="text"
-              placeholder="Classic Burger"
-              className="w-full rounded-xl border border-slate-200 px-5 py-3 outline-none focus:border-orange-500"
+              id="price"
+              name="price"
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.price}
+              onChange={handleChange}
+              placeholder="899"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
             />
-
           </div>
-
-          {/* Description */}
 
           <div>
-
-            <label className="mb-2 block font-semibold">
-              Description
-            </label>
-
-            <textarea
-              rows={5}
-              placeholder="Write product description..."
-              className="w-full rounded-xl border border-slate-200 px-5 py-3 outline-none focus:border-orange-500"
-            />
-
-          </div>
-
-          {/* Two Columns */}
-
-          <div className="grid gap-6 md:grid-cols-2">
-
-            {/* Price */}
-
-            <div>
-
-              <label className="mb-2 block font-semibold">
-                Price (Rs.)
-              </label>
-
-              <input
-                type="number"
-                placeholder="899"
-                className="w-full rounded-xl border border-slate-200 px-5 py-3 outline-none focus:border-orange-500"
-              />
-
-            </div>
-
-            {/* Rating */}
-
-            <div>
-
-              <label className="mb-2 block font-semibold">
-                Rating
-              </label>
-
-              <input
-                type="number"
-                step="0.1"
-                placeholder="4.8"
-                className="w-full rounded-xl border border-slate-200 px-5 py-3 outline-none focus:border-orange-500"
-              />
-
-            </div>
-
-          </div>
-
-          {/* Category & Restaurant */}
-
-          <div className="grid gap-6 md:grid-cols-2">
-
-            <div>
-
-              <label className="mb-2 block font-semibold">
-                Category
-              </label>
-
-              <select className="w-full rounded-xl border border-slate-200 px-5 py-3">
-
-                <option>Burgers</option>
-                <option>Pizza</option>
-                <option>Pakistani</option>
-                <option>Chinese</option>
-                <option>Italian</option>
-                <option>BBQ</option>
-                <option>Desserts</option>
-                <option>Drinks</option>
-
-              </select>
-
-            </div>
-
-            <div>
-
-              <label className="mb-2 block font-semibold">
-                Restaurant
-              </label>
-
-              <select className="w-full rounded-xl border border-slate-200 px-5 py-3">
-
-                <option>Burger Hub</option>
-                <option>Pizza Palace</option>
-                <option>Chinese Wok</option>
-                <option>Desi Kitchen</option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-          {/* Image Upload */}
-
-          <div>
-
-            <label className="mb-3 block font-semibold">
-              Product Image
-            </label>
-
             <label
-              className="
-                flex
-                cursor-pointer
-                flex-col
-                items-center
-                justify-center
-                rounded-2xl
-                border-2
-                border-dashed
-                border-orange-300
-                bg-orange-50
-                py-16
-                transition
-                hover:bg-orange-100
-              "
+              htmlFor="rating"
+              className="mb-2 block font-semibold text-slate-800"
             >
-
-              <Upload
-                size={45}
-                className="text-orange-500"
-              />
-
-              <span className="mt-5 text-lg font-semibold">
-                Click to Upload Image
-              </span>
-
-              <span className="mt-2 text-sm text-slate-500">
-                JPG, PNG or WEBP
-              </span>
-
-              <input
-                type="file"
-                className="hidden"
-              />
-
+              Rating
             </label>
 
+            <input
+              id="rating"
+              name="rating"
+              type="number"
+              min="0"
+              max="5"
+              step="0.1"
+              value={form.rating}
+              onChange={handleChange}
+              placeholder="4.8"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
+            />
           </div>
 
-          {/* Submit */}
+        </div>
+
+        {/* Category + Restaurant */}
+
+        <div className="grid gap-6 md:grid-cols-2">
+
+          <div>
+            <label
+              htmlFor="category"
+              className="mb-2 block font-semibold text-slate-800"
+            >
+              Category *
+            </label>
+
+            <input
+              id="category"
+              name="category"
+              type="text"
+              value={form.category}
+              onChange={handleChange}
+              placeholder="Burgers"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="restaurant"
+              className="mb-2 block font-semibold text-slate-800"
+            >
+              Restaurant *
+            </label>
+
+            <input
+              id="restaurant"
+              name="restaurant"
+              type="text"
+              value={form.restaurant}
+              onChange={handleChange}
+              placeholder="Burger Hub"
+              className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
+            />
+          </div>
+
+        </div>
+
+        {/* Image */}
+
+        <div>
+          <label
+            htmlFor="image"
+            className="mb-2 block font-semibold text-slate-800"
+          >
+            Image URL
+          </label>
+
+          <input
+            id="image"
+            name="image"
+            type="text"
+            value={form.image}
+            onChange={handleChange}
+            placeholder="/images/burger.jpg"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100"
+          />
+
+          <p className="mt-2 text-sm text-slate-500">
+            Example: /images/burger.jpg
+          </p>
+        </div>
+
+        {/* Availability */}
+
+        <div className="rounded-xl bg-slate-50 p-4">
+
+          <label className="flex cursor-pointer items-center gap-3">
+
+            <input
+              type="checkbox"
+              checked={form.available}
+              onChange={(e) =>
+                setForm((current) => ({
+                  ...current,
+                  available: e.target.checked,
+                }))
+              }
+              className="h-5 w-5 accent-orange-500"
+            />
+
+            <span className="font-semibold text-slate-800">
+              Product is available
+            </span>
+
+          </label>
+
+        </div>
+
+        {/* Buttons */}
+
+        <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-6 sm:flex-row sm:justify-end">
+
+          <Link
+            href="/admin/products"
+            className="rounded-xl border border-slate-300 px-6 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            Cancel
+          </Link>
 
           <button
-            className="
-              w-full
-              rounded-xl
-              bg-orange-500
-              py-4
-              text-lg
-              font-bold
-              text-white
-              transition
-              hover:bg-orange-600
-            "
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Save Product
+            <Save size={19} className="mr-2" />
+
+            {loading
+              ? "Saving..."
+              : "Save Product"}
           </button>
 
-        </form>
+        </div>
 
-      </div>
+      </form>
 
     </div>
   );

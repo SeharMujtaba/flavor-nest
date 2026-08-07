@@ -1,189 +1,265 @@
+"use client";
+
+import { useMemo } from "react";
 import {
   DollarSign,
   ShoppingBag,
   Users,
+  Package,
   TrendingUp,
-  Star,
-  ArrowUpRight,
+  CheckCircle2,
+  Clock3,
+  XCircle,
 } from "lucide-react";
 
+import {
+  getCustomers,
+  getOrders,
+  getProducts,
+} from "@/lib/admin-data";
+
+function getAmount(value: string) {
+  return Number(value.replace(/[^0-9]/g, ""));
+}
+
 export default function AnalyticsPage() {
-  const stats = [
+  const orders = getOrders();
+  const customers = getCustomers();
+  const products = getProducts();
+
+  const revenue = useMemo(() => {
+    return orders
+      .filter((order) => order.status !== "Cancelled")
+      .reduce(
+        (sum, order) => sum + getAmount(order.total),
+        0
+      );
+  }, [orders]);
+
+  const delivered = orders.filter(
+    (order) => order.status === "Delivered"
+  ).length;
+
+  const preparing = orders.filter(
+    (order) => order.status === "Preparing"
+  ).length;
+
+  const pending = orders.filter(
+    (order) => order.status === "Pending"
+  ).length;
+
+  const cancelled = orders.filter(
+    (order) => order.status === "Cancelled"
+  ).length;
+
+  const averageOrderValue =
+    orders.length > 0
+      ? Math.round(revenue / Math.max(1, orders.length - cancelled))
+      : 0;
+
+  const analyticsCards = [
     {
-      title: "Total Revenue",
-      value: "Rs. 845,250",
+      title: "Revenue",
+      value: `Rs. ${revenue.toLocaleString()}`,
       icon: DollarSign,
       color: "bg-green-100 text-green-600",
-      growth: "+18%",
     },
     {
       title: "Total Orders",
-      value: "1,245",
+      value: orders.length,
       icon: ShoppingBag,
-      color: "bg-orange-100 text-orange-600",
-      growth: "+12%",
+      color: "bg-orange-100 text-orange-500",
     },
     {
       title: "Customers",
-      value: "532",
+      value: customers.length,
       icon: Users,
-      color: "bg-blue-100 text-blue-600",
-      growth: "+9%",
+      color: "bg-purple-100 text-purple-600",
     },
     {
-      title: "Restaurant Rating",
-      value: "4.9",
-      icon: Star,
-      color: "bg-yellow-100 text-yellow-500",
-      growth: "+0.2",
+      title: "Products",
+      value: products.length,
+      icon: Package,
+      color: "bg-blue-100 text-blue-600",
     },
   ];
 
-  const topFoods = [
+  const statuses = [
     {
-      name: "Classic Cheeseburger",
-      orders: 186,
-      revenue: "Rs. 167,214",
+      name: "Delivered",
+      value: delivered,
+      icon: CheckCircle2,
+      color: "text-green-600",
+      bg: "bg-green-100",
     },
     {
-      name: "Chicken Biryani",
-      orders: 172,
-      revenue: "Rs. 120,228",
+      name: "Preparing",
+      value: preparing,
+      icon: Clock3,
+      color: "text-blue-600",
+      bg: "bg-blue-100",
     },
     {
-      name: "Pepperoni Pizza",
-      orders: 155,
-      revenue: "Rs. 263,345",
+      name: "Pending",
+      value: pending,
+      icon: Clock3,
+      color: "text-yellow-700",
+      bg: "bg-yellow-100",
     },
     {
-      name: "Chicken Karahi",
-      orders: 148,
-      revenue: "Rs. 221,852",
+      name: "Cancelled",
+      value: cancelled,
+      icon: XCircle,
+      color: "text-red-600",
+      bg: "bg-red-100",
     },
   ];
 
   return (
-    <main className="space-y-8">
-
-      {/* Header */}
+    <div className="space-y-10">
 
       <div>
-
         <h1 className="text-4xl font-extrabold text-slate-900">
-          Analytics Dashboard
+          Analytics
         </h1>
 
         <p className="mt-2 text-slate-500">
-          Monitor your restaurant performance.
+          Monitor your FlavorNest business performance.
         </p>
-
       </div>
 
-      {/* Cards */}
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-
-        {stats.map((item) => {
-
-          const Icon = item.icon;
+        {analyticsCards.map((card) => {
+          const Icon = card.icon;
 
           return (
             <div
-              key={item.title}
-              className="
-                rounded-3xl
-                bg-white
-                p-6
-                shadow-sm
-                transition
-                hover:-translate-y-1
-                hover:shadow-xl
-              "
+              key={card.title}
+              className="rounded-2xl bg-white p-6 shadow-sm"
             >
-
-              <div className="flex items-center justify-between">
-
-                <div>
-
-                  <p className="text-sm text-slate-500">
-                    {item.title}
-                  </p>
-
-                  <h2 className="mt-3 text-3xl font-bold">
-                    {item.value}
-                  </h2>
-
-                </div>
-
-                <div
-                  className={`rounded-2xl p-4 ${item.color}`}
-                >
-                  <Icon size={28} />
-                </div>
-
+              <div
+                className={`flex h-14 w-14 items-center justify-center rounded-xl ${card.color}`}
+              >
+                <Icon size={26} />
               </div>
 
-              <div className="mt-6 flex items-center gap-2 text-green-600">
+              <p className="mt-5 text-slate-500">
+                {card.title}
+              </p>
 
-                <ArrowUpRight size={18} />
-
-                <span className="font-semibold">
-                  {item.growth}
-                </span>
-
-                <span className="text-slate-500">
-                  this month
-                </span>
-
-              </div>
-
+              <p className="mt-2 text-3xl font-extrabold text-slate-900">
+                {card.value}
+              </p>
             </div>
           );
-
         })}
 
       </div>
 
-      {/* Revenue Chart Placeholder */}
+      <div className="grid gap-6 lg:grid-cols-2">
 
-      <div className="rounded-3xl bg-white p-8 shadow-sm">
+        <div className="rounded-2xl bg-white p-8 shadow-sm">
 
-        <h2 className="text-2xl font-bold">
-          Revenue Overview
-        </h2>
+          <div className="flex items-center gap-3">
+            <TrendingUp className="text-orange-500" />
 
-        <div
-          className="
-            mt-8
-            flex
-            h-80
-            items-center
-            justify-center
+            <h2 className="text-2xl font-bold">
+              Business Overview
+            </h2>
+          </div>
 
-            rounded-2xl
+          <div className="mt-8 space-y-6">
 
-            border-2
-            border-dashed
-            border-slate-300
+            <div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">
+                  Average Order Value
+                </span>
 
-            bg-slate-50
-          "
-        >
+                <span className="font-bold">
+                  Rs. {averageOrderValue.toLocaleString()}
+                </span>
+              </div>
 
-          <div className="text-center">
+              <div className="mt-2 h-3 rounded-full bg-slate-100">
+                <div className="h-3 w-[75%] rounded-full bg-orange-500" />
+              </div>
+            </div>
 
-            <TrendingUp
-              size={60}
-              className="mx-auto text-orange-500"
-            />
+            <div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">
+                  Delivery Success
+                </span>
 
-            <h3 className="mt-6 text-2xl font-bold">
-              Revenue Chart
-            </h3>
+                <span className="font-bold">
+                  {orders.length
+                    ? Math.round(
+                        (delivered / orders.length) * 100
+                      )
+                    : 0}
+                  %
+                </span>
+              </div>
 
-            <p className="mt-2 text-slate-500">
-              Recharts / Chart.js will be integrated later.
-            </p>
+              <div className="mt-2 h-3 rounded-full bg-slate-100">
+                <div
+                  className="h-3 rounded-full bg-green-500"
+                  style={{
+                    width: `${
+                      orders.length
+                        ? (delivered / orders.length) * 100
+                        : 0
+                    }%`,
+                  }}
+                />
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="rounded-2xl bg-white p-8 shadow-sm">
+
+          <h2 className="text-2xl font-bold">
+            Order Status
+          </h2>
+
+          <div className="mt-6 space-y-4">
+
+            {statuses.map((status) => {
+              const Icon = status.icon;
+
+              return (
+                <div
+                  key={status.name}
+                  className="flex items-center justify-between rounded-xl bg-slate-50 p-4"
+                >
+                  <div className="flex items-center gap-3">
+
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${status.bg}`}
+                    >
+                      <Icon
+                        size={20}
+                        className={status.color}
+                      />
+                    </div>
+
+                    <span className="font-semibold">
+                      {status.name}
+                    </span>
+
+                  </div>
+
+                  <span className="text-xl font-bold">
+                    {status.value}
+                  </span>
+                </div>
+              );
+            })}
 
           </div>
 
@@ -191,90 +267,6 @@ export default function AnalyticsPage() {
 
       </div>
 
-      {/* Top Selling */}
-
-      <div className="rounded-3xl bg-white p-8 shadow-sm">
-
-        <h2 className="text-2xl font-bold">
-          Top Selling Foods
-        </h2>
-
-        <div className="mt-8 space-y-4">
-
-          {topFoods.map((food, index) => (
-
-            <div
-              key={food.name}
-              className="
-                flex
-                items-center
-                justify-between
-
-                rounded-2xl
-
-                border
-                border-slate-200
-
-                p-5
-
-                transition
-
-                hover:border-orange-300
-              "
-            >
-
-              <div className="flex items-center gap-5">
-
-                <div
-                  className="
-                    flex
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-
-                    rounded-full
-
-                    bg-orange-100
-
-                    font-bold
-
-                    text-orange-500
-                  "
-                >
-                  #{index + 1}
-                </div>
-
-                <div>
-
-                  <h3 className="font-bold">
-                    {food.name}
-                  </h3>
-
-                  <p className="text-sm text-slate-500">
-                    {food.orders} Orders
-                  </p>
-
-                </div>
-
-              </div>
-
-              <div className="text-right">
-
-                <p className="font-bold text-green-600">
-                  {food.revenue}
-                </p>
-
-              </div>
-
-            </div>
-
-          ))}
-
-        </div>
-
-      </div>
-
-    </main>
+    </div>
   );
 }

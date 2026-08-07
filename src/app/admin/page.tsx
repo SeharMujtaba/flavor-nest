@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import {
   DollarSign,
   ShoppingBag,
@@ -5,38 +8,67 @@ import {
   Users,
 } from "lucide-react";
 
+import {
+  getCustomers,
+  getOrders,
+  getProducts,
+  type AdminOrder,
+} from "@/lib/admin-data";
+
 const stats = [
   {
     title: "Total Revenue",
-    value: "Rs. 245,800",
     icon: DollarSign,
     color: "bg-green-100 text-green-600",
   },
   {
     title: "Total Orders",
-    value: "1,245",
     icon: ShoppingBag,
     color: "bg-orange-100 text-orange-500",
   },
   {
     title: "Products",
-    value: "86",
     icon: Package,
     color: "bg-blue-100 text-blue-600",
   },
   {
     title: "Customers",
-    value: "542",
     icon: Users,
     color: "bg-purple-100 text-purple-600",
   },
 ];
 
+function getAmount(value: string) {
+  return Number(value.replace(/[^0-9]/g, ""));
+}
+
 export default function AdminDashboard() {
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
+  const [customerCount, setCustomerCount] = useState(0);
+  const [productCount, setProductCount] = useState(0);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setOrders(getOrders());
+    setCustomerCount(getCustomers().length);
+    setProductCount(getProducts().length);
+  }, []);
+
+  const revenue = useMemo(() => {
+    return orders
+      .filter((order) => order.status !== "Cancelled")
+      .reduce((sum, order) => sum + getAmount(order.total), 0);
+  }, [orders]);
+
+  const statValues = [
+    `Rs. ${revenue.toLocaleString()}`,
+    orders.length.toLocaleString(),
+    productCount.toLocaleString(),
+    customerCount.toLocaleString(),
+  ];
+
   return (
     <div className="space-y-10">
-
-      {/* Heading */}
 
       <div>
         <h1 className="text-4xl font-extrabold text-slate-900">
@@ -48,25 +80,14 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {/* Statistics */}
-
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-
-        {stats.map((item) => {
+        {stats.map((item, index) => {
           const Icon = item.icon;
 
           return (
             <div
               key={item.title}
-              className="
-                rounded-2xl
-                bg-white
-                p-6
-                shadow-sm
-                transition
-                hover:-translate-y-1
-                hover:shadow-xl
-              "
+              className="rounded-2xl bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
             >
               <div
                 className={`flex h-14 w-14 items-center justify-center rounded-xl ${item.color}`}
@@ -79,15 +100,12 @@ export default function AdminDashboard() {
               </h2>
 
               <p className="mt-2 text-3xl font-bold text-slate-900">
-                {item.value}
+                {statValues[index]}
               </p>
             </div>
           );
         })}
-
       </div>
-
-      {/* Recent Orders */}
 
       <div className="rounded-2xl bg-white shadow-sm">
 
@@ -99,95 +117,52 @@ export default function AdminDashboard() {
 
         <div className="overflow-x-auto">
 
-          <table className="w-full">
+          <table className="w-full min-w-[700px]">
 
             <thead>
-
               <tr className="border-b border-slate-200 text-left">
-
                 <th className="p-5">Order</th>
                 <th className="p-5">Customer</th>
                 <th className="p-5">Status</th>
                 <th className="p-5">Total</th>
-
               </tr>
-
             </thead>
 
             <tbody>
+              {orders.slice(0, 4).map((order) => (
+                <tr
+                  key={order.id}
+                  className="border-b border-slate-100 last:border-0"
+                >
+                  <td className="p-5 font-semibold">
+                    {order.id}
+                  </td>
 
-              <tr className="border-b">
+                  <td className="p-5">
+                    {order.customer}
+                  </td>
 
-                <td className="p-5 font-semibold">
-                  #1001
-                </td>
+                  <td className="p-5">
+                    <span
+                      className={`rounded-full px-3 py-1 text-sm font-semibold ${
+                        order.status === "Delivered"
+                          ? "bg-green-100 text-green-600"
+                          : order.status === "Preparing"
+                          ? "bg-blue-100 text-blue-600"
+                          : order.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-600"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
 
-                <td className="p-5">
-                  Ahmed Ali
-                </td>
-
-                <td className="p-5">
-
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-600">
-                    Delivered
-                  </span>
-
-                </td>
-
-                <td className="p-5 font-bold">
-                  Rs. 2,450
-                </td>
-
-              </tr>
-
-              <tr className="border-b">
-
-                <td className="p-5 font-semibold">
-                  #1002
-                </td>
-
-                <td className="p-5">
-                  Sara Khan
-                </td>
-
-                <td className="p-5">
-
-                  <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-semibold text-yellow-700">
-                    Preparing
-                  </span>
-
-                </td>
-
-                <td className="p-5 font-bold">
-                  Rs. 1,850
-                </td>
-
-              </tr>
-
-              <tr>
-
-                <td className="p-5 font-semibold">
-                  #1003
-                </td>
-
-                <td className="p-5">
-                  Hamza
-                </td>
-
-                <td className="p-5">
-
-                  <span className="rounded-full bg-orange-100 px-3 py-1 text-sm font-semibold text-orange-600">
-                    Pending
-                  </span>
-
-                </td>
-
-                <td className="p-5 font-bold">
-                  Rs. 950
-                </td>
-
-              </tr>
-
+                  <td className="p-5 font-bold">
+                    {order.total}
+                  </td>
+                </tr>
+              ))}
             </tbody>
 
           </table>

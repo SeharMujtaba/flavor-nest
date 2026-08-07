@@ -8,7 +8,7 @@ import {
 } from "react";
 
 export type CartItem = {
-  id: number;
+  id: string | number;
   name: string;
   image: string;
   description: string;
