@@ -19,13 +19,15 @@ export type CartItem = {
 type CartContextType = {
   cart: CartItem[];
 
-  addToCart: (item: Omit<CartItem, "quantity">) => void;
+  addToCart: (
+    item: Omit<CartItem, "quantity">
+  ) => void;
 
-  removeFromCart: (id: number) => void;
+  removeFromCart: (id: string | number) => void;
 
-  increaseQuantity: (id: number) => void;
+  increaseQuantity: (id: string | number) => void;
 
-  decreaseQuantity: (id: number) => void;
+  decreaseQuantity: (id: string | number) => void;
 
   clearCart: () => void;
 
@@ -35,14 +37,15 @@ type CartContextType = {
 
   subtotal: number;
 
-  // Order ID
-  orderId: number | null;
-  setOrderId: (id: number | null) => void;
+  orderId: string | null;
+
+  setOrderId: (id: string | null) => void;
 };
 
-const CartContext = createContext<CartContextType | undefined>(
-  undefined
-);
+const CartContext =
+  createContext<CartContextType | undefined>(
+    undefined
+  );
 
 export function CartProvider({
   children,
@@ -51,22 +54,26 @@ export function CartProvider({
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  const [orderId, setOrderId] = useState<number | null>(
-    null
-  );
+  const [orderId, setOrderId] = useState<
+    string | null
+  >(null);
 
-  // Add Item to Cart
+  // ==============================
+  // ADD TO CART
+  // ==============================
+
   const addToCart = (
     item: Omit<CartItem, "quantity">
   ) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find(
-        (cartItem) => cartItem.id === item.id
+    setCart((previousCart) => {
+      const existingItem = previousCart.find(
+        (cartItem) =>
+          String(cartItem.id) === String(item.id)
       );
 
       if (existingItem) {
-        return prevCart.map((cartItem) =>
-          cartItem.id === item.id
+        return previousCart.map((cartItem) =>
+          String(cartItem.id) === String(item.id)
             ? {
                 ...cartItem,
                 quantity: cartItem.quantity + 1,
@@ -76,7 +83,7 @@ export function CartProvider({
       }
 
       return [
-        ...prevCart,
+        ...previousCart,
         {
           ...item,
           quantity: 1,
@@ -85,18 +92,31 @@ export function CartProvider({
     });
   };
 
-  // Remove Item
-  const removeFromCart = (id: number) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.id !== id)
+  // ==============================
+  // REMOVE FROM CART
+  // ==============================
+
+  const removeFromCart = (
+    id: string | number
+  ) => {
+    setCart((previousCart) =>
+      previousCart.filter(
+        (item) =>
+          String(item.id) !== String(id)
+      )
     );
   };
 
-  // Increase Quantity
-  const increaseQuantity = (id: number) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id
+  // ==============================
+  // INCREASE QUANTITY
+  // ==============================
+
+  const increaseQuantity = (
+    id: string | number
+  ) => {
+    setCart((previousCart) =>
+      previousCart.map((item) =>
+        String(item.id) === String(id)
           ? {
               ...item,
               quantity: item.quantity + 1,
@@ -106,12 +126,17 @@ export function CartProvider({
     );
   };
 
-  // Decrease Quantity
-  const decreaseQuantity = (id: number) => {
-    setCart((prevCart) =>
-      prevCart
+  // ==============================
+  // DECREASE QUANTITY
+  // ==============================
+
+  const decreaseQuantity = (
+    id: string | number
+  ) => {
+    setCart((previousCart) =>
+      previousCart
         .map((item) =>
-          item.id === id
+          String(item.id) === String(id)
             ? {
                 ...item,
                 quantity: item.quantity - 1,
@@ -122,25 +147,34 @@ export function CartProvider({
     );
   };
 
-  // Clear Cart
+  // ==============================
+  // CLEAR CART
+  // ==============================
+
   const clearCart = () => {
     setCart([]);
   };
 
-  // Total Items
+  // ==============================
+  // TOTAL ITEMS
+  // ==============================
+
   const totalItems = cart.reduce(
-    (total, item) => total + item.quantity,
+    (total, item) =>
+      total + item.quantity,
     0
   );
 
-  // Total Price
+  // ==============================
+  // TOTAL PRICE
+  // ==============================
+
   const totalPrice = cart.reduce(
     (total, item) =>
       total + item.price * item.quantity,
     0
   );
 
-  // Subtotal
   const subtotal = totalPrice;
 
   return (

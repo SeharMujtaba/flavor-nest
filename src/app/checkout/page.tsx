@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import {
   Phone,
   CreditCard,
@@ -10,8 +11,8 @@ import {
   ArrowLeft,
   Loader2,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
 
+import { toast } from "react-hot-toast";
 import { useCart } from "@/context/CartContext";
 
 type FormState = {
@@ -23,25 +24,26 @@ type FormState = {
   payment: string;
 };
 
-type StoredUser = {
-  _id?: string;
-  id?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
+type OrderResponse = {
+  success?: boolean;
+  message?: string;
+  order?: {
+    _id?: string;
+  };
+  error?: string;
 };
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function CheckoutPage() {
   const router = useRouter();
 
-  const {
-    cart,
-    totalPrice,
-    clearCart,
-  } = useCart();
+  const { cart, totalPrice, clearCart } = useCart();
 
   const deliveryFee = 250;
-  const total = totalPrice + deliveryFee;
+  const subtotal = Number(totalPrice) || 0;
+  const total = subtotal + deliveryFee;
 
   const [form, setForm] = useState<FormState>({
     name: "",
@@ -75,18 +77,34 @@ export default function CheckoutPage() {
   };
 
   const placeOrder = async () => {
-    if (
-      !form.name.trim() ||
-      !form.email.trim() ||
-      !form.phone.trim() ||
-      !form.city.trim() ||
-      !form.address.trim()
-    ) {
-      toast.error("Please fill all required fields.");
+    if (loading) return;
+
+    if (!form.name.trim()) {
+      toast.error("Please enter your full name.");
       return;
     }
 
-    if (cart.length === 0) {
+    if (!form.email.trim()) {
+      toast.error("Please enter your email.");
+      return;
+    }
+
+    if (!form.phone.trim()) {
+      toast.error("Please enter your phone number.");
+      return;
+    }
+
+    if (!form.city.trim()) {
+      toast.error("Please enter your city.");
+      return;
+    }
+
+    if (!form.address.trim()) {
+      toast.error("Please enter your delivery address.");
+      return;
+    }
+
+    if (!cart || cart.length === 0) {
       toast.error("Your cart is empty.");
       return;
     }
@@ -94,70 +112,23 @@ export default function CheckoutPage() {
     try {
       setLoading(true);
 
-      /*
-       * Try to get the logged-in customer from localStorage.
-       *
-       * This supports common formats such as:
-       * {
-       *   "_id": "...",
-       *   "name": "...",
-       *   "email": "..."
-       * }
-       */
-      let storedUser: StoredUser | null = null;
+      const orderItems = cart.map((item) => {
+        const itemId = String(item.id);
 
-      const possibleUserKeys = [
-        "user",
-        "currentUser",
-        "flavornestUser",
-      ];
+        const isMongoObjectId =
+          /^[0-9a-fA-F]{24}$/.test(itemId);
 
-      for (const key of possibleUserKeys) {
-        const savedUser = localStorage.getItem(key);
-
-        if (savedUser) {
-          try {
-            const parsed = JSON.parse(savedUser);
-
-            if (parsed) {
-              storedUser = parsed;
-              break;
-            }
-          } catch {
-            console.warn(`Could not parse ${key} from localStorage.`);
-          }
-        }
-      }
-
-      const customerId =
-        storedUser?._id || storedUser?.id || "";
-
-      /*
-       * Your current Order schema requires customer.
-       */
-      if (!customerId) {
-        toast.error(
-          "Please login before placing an order."
-        );
-
-        setLoading(false);
-        return;
-      }
-
-      /*
-       * Convert cart items into the structure expected
-       * by backend/models/Order.js
-       */
-      const orderItems = cart.map((item) => ({
-        product: String(item.id),
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        image: item.image || "",
-      }));
+        return {
+          product: isMongoObjectId ? itemId : null,
+          name: String(item.name).trim(),
+          quantity: Number(item.quantity),
+          price: Number(item.price),
+          image: item.image ? String(item.image) : "",
+        };
+      });
 
       const orderPayload = {
-        customer: customerId,
+        customer: null,
 
         customerName: form.name.trim(),
 
@@ -171,69 +142,94 @@ export default function CheckoutPage() {
 
         totalAmount: total,
 
-        deliveryAddress:
-          `${form.city.trim()}, ${form.address.trim()}`,
+        deliveryAddress: `${form.city.trim()}, ${form.address.trim()}`,
+
+        paymentMethod: form.payment,
 
         status: "Pending",
       };
 
-      console.log("Creating order:", orderPayload);
+      console.log("=================================");
+      console.log("ORDER API URL:", `${API_BASE_URL}/api/orders`);
+      console.log("ORDER PAYLOAD:", orderPayload);
+      console.log("=================================");
 
       const response = await fetch(
-        "http://localhost:5000/api/orders",
+        `${API_BASE_URL}/api/orders`,
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
+            Accept: "application/json",
           },
-
           body: JSON.stringify(orderPayload),
         }
       );
 
-      const data = await response.json();
+      const responseText = await response.text();
 
-      console.log("Order API response:", data);
+      console.log("ORDER HTTP STATUS:", response.status);
+      console.log("ORDER RAW RESPONSE:", responseText);
+
+      let data: OrderResponse = {};
+
+      try {
+        data = responseText
+          ? JSON.parse(responseText)
+          : {};
+      } catch {
+        data = {};
+      }
+
+      console.log("ORDER PARSED RESPONSE:", data);
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to place order."
+          data.message ||
+            data.error ||
+            `Failed to create order. Server returned ${response.status}.`
         );
       }
 
-      /*
-       * Save the newly created order ID so the
-       * success page can use it later.
-       */
-      if (data.order?._id) {
-        sessionStorage.setItem(
-          "lastOrderId",
-          data.order._id
+      if (!data.success) {
+        throw new Error(
+          data.message || "Backend did not confirm order creation."
         );
       }
+
+      if (!data.order?._id) {
+        throw new Error(
+          "Order was created but the server did not return an order ID."
+        );
+      }
+
+      sessionStorage.setItem(
+        "lastOrderId",
+        data.order._id
+      );
 
       clearCart();
 
-      toast.success(
-        "Order placed successfully!"
-      );
+      toast.success("Order placed successfully!");
 
       router.push("/order-success");
     } catch (error) {
+      console.error("=================================");
       console.error("PLACE ORDER ERROR:", error);
+      console.error("=================================");
 
-      toast.error(
+      const message =
         error instanceof Error
           ? error.message
-          : "Failed to place order."
-      );
+          : "Failed to place order.";
+
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (cart.length === 0) {
+  if (!cart || cart.length === 0) {
     return (
       <main className="min-h-screen bg-[#FFF8F3] px-6 py-20">
         <div className="mx-auto max-w-3xl rounded-3xl bg-white p-12 text-center shadow-md">
@@ -260,8 +256,6 @@ export default function CheckoutPage() {
     <main className="min-h-screen bg-[#FFF8F3] px-4 py-10 sm:px-6 lg:py-16">
       <div className="mx-auto max-w-7xl">
 
-        {/* Back */}
-
         <Link
           href="/cart"
           className="mb-8 inline-flex items-center gap-2 text-orange-500 hover:underline"
@@ -269,8 +263,6 @@ export default function CheckoutPage() {
           <ArrowLeft size={18} />
           Back to Cart
         </Link>
-
-        {/* Heading */}
 
         <h1 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">
           Checkout
@@ -282,11 +274,7 @@ export default function CheckoutPage() {
 
         <div className="mt-10 grid gap-8 lg:grid-cols-3 lg:gap-10">
 
-          {/* LEFT */}
-
           <div className="space-y-8 lg:col-span-2">
-
-            {/* Customer Details */}
 
             <div className="rounded-3xl bg-white p-5 shadow-md sm:p-8">
 
@@ -296,96 +284,107 @@ export default function CheckoutPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
 
-                {/* Name */}
-
                 <div>
-                  <label className="mb-2 block font-semibold">
+                  <label
+                    htmlFor="name"
+                    className="mb-2 block font-semibold"
+                  >
                     Full Name
                   </label>
 
                   <input
+                    id="name"
                     name="name"
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Enter your name"
+                    autoComplete="name"
                     className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                   />
                 </div>
 
-                {/* Email */}
-
                 <div>
-                  <label className="mb-2 block font-semibold">
+                  <label
+                    htmlFor="email"
+                    className="mb-2 block font-semibold"
+                  >
                     Email
                   </label>
 
                   <input
+                    id="email"
                     type="email"
                     name="email"
                     value={form.email}
                     onChange={handleChange}
                     placeholder="Email Address"
+                    autoComplete="email"
                     className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                   />
                 </div>
 
-                {/* Phone */}
-
                 <div>
-                  <label className="mb-2 block font-semibold">
+                  <label
+                    htmlFor="phone"
+                    className="mb-2 block font-semibold"
+                  >
                     Phone
                   </label>
 
                   <input
+                    id="phone"
                     type="tel"
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="+92 300 1234567"
+                    autoComplete="tel"
                     className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                   />
                 </div>
 
-                {/* City */}
-
                 <div>
-                  <label className="mb-2 block font-semibold">
+                  <label
+                    htmlFor="city"
+                    className="mb-2 block font-semibold"
+                  >
                     City
                   </label>
 
                   <input
+                    id="city"
                     name="city"
                     value={form.city}
                     onChange={handleChange}
                     placeholder="Lahore"
+                    autoComplete="address-level2"
                     className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                   />
                 </div>
 
               </div>
 
-              {/* Address */}
-
               <div className="mt-6">
-
-                <label className="mb-2 block font-semibold">
+                <label
+                  htmlFor="address"
+                  className="mb-2 block font-semibold"
+                >
                   Delivery Address
                 </label>
 
                 <textarea
+                  id="address"
                   rows={4}
                   name="address"
                   value={form.address}
                   onChange={handleChange}
                   placeholder="House No, Street, Area..."
+                  autoComplete="street-address"
                   className="w-full resize-none rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                 />
-
               </div>
 
             </div>
-
-            {/* Payment */}
 
             <div className="rounded-3xl bg-white p-5 shadow-md sm:p-8">
 
@@ -446,24 +445,18 @@ export default function CheckoutPage() {
               </div>
 
               <p className="mt-5 text-sm text-slate-400">
-                Payment integration can be connected later.
-                Currently the order is stored with the selected
-                payment method handled on the frontend.
+                Your selected payment method will be saved with the order.
               </p>
 
             </div>
 
           </div>
 
-          {/* RIGHT */}
-
           <div className="h-fit rounded-3xl bg-white p-5 shadow-md sm:p-8 lg:sticky lg:top-24">
 
             <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
               Order Summary
             </h2>
-
-            {/* Items */}
 
             <div className="mt-8 space-y-5">
 
@@ -473,6 +466,7 @@ export default function CheckoutPage() {
                   className="flex gap-4 border-b border-slate-100 pb-5"
                 >
                   <div className="min-w-0 flex-1">
+
                     <p className="font-semibold text-slate-900">
                       {item.name}
                     </p>
@@ -480,11 +474,13 @@ export default function CheckoutPage() {
                     <p className="mt-1 text-sm text-slate-500">
                       Qty: {item.quantity}
                     </p>
+
                   </div>
 
                   <span className="shrink-0 font-bold text-slate-900">
                     Rs.{" "}
-                    {item.price * item.quantity}
+                    {Number(item.price) *
+                      Number(item.quantity)}
                   </span>
                 </div>
               ))}
@@ -493,7 +489,7 @@ export default function CheckoutPage() {
                 <span>Subtotal</span>
 
                 <span>
-                  Rs. {totalPrice}
+                  Rs. {subtotal}
                 </span>
               </div>
 
@@ -515,8 +511,6 @@ export default function CheckoutPage() {
 
             </div>
 
-            {/* Place Order */}
-
             <button
               type="button"
               onClick={placeOrder}
@@ -529,7 +523,6 @@ export default function CheckoutPage() {
                     size={21}
                     className="animate-spin"
                   />
-
                   Placing Order...
                 </>
               ) : (
@@ -537,10 +530,13 @@ export default function CheckoutPage() {
               )}
             </button>
 
+            <p className="mt-4 text-center text-xs text-slate-400">
+              No account or login is required to place your order.
+            </p>
+
           </div>
 
         </div>
-
       </div>
     </main>
   );
