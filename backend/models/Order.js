@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+
 const mongoose = require("mongoose");
 
 const orderItemSchema = new mongoose.Schema(
@@ -6,12 +7,14 @@ const orderItemSchema = new mongoose.Schema(
     product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
-      required: true,
+      required: false,
+      default: null,
     },
 
     name: {
       type: String,
       required: true,
+      trim: true,
     },
 
     quantity: {
@@ -36,35 +39,42 @@ const orderItemSchema = new mongoose.Schema(
 
 const orderSchema = new mongoose.Schema(
   {
+    // OPTIONAL because guest checkout is allowed
     customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      default: null,
+      required: false,
     },
 
     customerName: {
       type: String,
       required: true,
+      trim: true,
     },
 
     customerEmail: {
       type: String,
       default: "",
+      trim: true,
     },
 
     customerPhone: {
       type: String,
       default: "",
+      trim: true,
     },
 
     restaurant: {
       type: String,
-      default: "",
+      default: "FlavorNest",
+      trim: true,
     },
 
     items: {
       type: [orderItemSchema],
       default: [],
+      required: true,
     },
 
     totalAmount: {
@@ -76,6 +86,17 @@ const orderSchema = new mongoose.Schema(
     deliveryAddress: {
       type: String,
       default: "",
+      trim: true,
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: [
+        "Cash on Delivery",
+        "Credit / Debit Card",
+        "JazzCash / EasyPaisa",
+      ],
+      default: "Cash on Delivery",
     },
 
     status: {

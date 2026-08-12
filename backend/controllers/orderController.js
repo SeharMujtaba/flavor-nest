@@ -3,7 +3,10 @@
 const mongoose = require("mongoose");
 const Order = require("../models/Order");
 
+// ==============================
 // GET ALL ORDERS
+// ==============================
+
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.find()
@@ -25,7 +28,10 @@ const getOrders = async (req, res) => {
   }
 };
 
+// ==============================
 // GET SINGLE ORDER
+// ==============================
+
 const getOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -64,9 +70,21 @@ const getOrder = async (req, res) => {
   }
 };
 
+// ==============================
 // CREATE ORDER
+// ==============================
+
+// ==============================
+// CREATE ORDER - GUEST CHECKOUT
+// ==============================
+
 const createOrder = async (req, res) => {
   try {
+    console.log("=================================");
+    console.log("CREATE ORDER REQUEST");
+    console.log("BODY:", JSON.stringify(req.body, null, 2));
+    console.log("=================================");
+
     const {
       customer,
       customerName,
@@ -76,22 +94,44 @@ const createOrder = async (req, res) => {
       items,
       totalAmount,
       deliveryAddress,
+      paymentMethod,
       status,
     } = req.body;
 
-    if (!customer) {
-      return res.status(400).json({
-        success: false,
-        message: "Customer is required",
-      });
+    // --------------------------------
+    // CUSTOMER IS OPTIONAL
+    // --------------------------------
+
+    let validCustomer = null;
+
+    if (customer !== undefined && customer !== null && customer !== "") {
+      if (!mongoose.Types.ObjectId.isValid(customer)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid customer ID",
+        });
+      }
+
+      validCustomer = customer;
     }
 
-    if (!customerName) {
+    // --------------------------------
+    // CUSTOMER NAME
+    // --------------------------------
+
+    if (
+      typeof customerName !== "string" ||
+      customerName.trim().length === 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "Customer name is required",
       });
     }
+
+    // --------------------------------
+    // ITEMS
+    // --------------------------------
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
@@ -100,39 +140,141 @@ const createOrder = async (req, res) => {
       });
     }
 
-    if (totalAmount === undefined || Number(totalAmount) < 0) {
+    // --------------------------------
+    // VALIDATE ITEMS
+    // --------------------------------
+
+    const cleanedItems = items.map((item) => ({
+      product:
+        item.product &&
+        mongoose.Types.ObjectId.isValid(item.product)
+          ? item.product
+          : null,
+
+      name: String(item.name || "").trim(),
+
+      quantity: Number(item.quantity),
+
+      price: Number(item.price),
+
+      image: String(item.image || ""),
+    }));
+
+    for (const item of cleanedItems) {
+      if (!item.name) {
+        return res.status(400).json({
+          success: false,
+          message: "Every order item must have a name",
+        });
+      }
+
+      if (!Number.isInteger(item.quantity) || item.quantity < 1) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid quantity for ${item.name}`,
+        });
+      }
+
+      if (!Number.isFinite(item.price) || item.price < 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid price for ${item.name}`,
+        });
+      }
+    }
+
+    // --------------------------------
+    // TOTAL
+    // --------------------------------
+
+    const numericTotal = Number(totalAmount);
+
+    if (!Number.isFinite(numericTotal) || numericTotal < 0) {
       return res.status(400).json({
         success: false,
         message: "Valid total amount is required",
       });
     }
 
+    // --------------------------------
+    // PAYMENT METHOD
+    // --------------------------------
+
+    const allowedPaymentMethods = [
+      "Cash on Delivery",
+      "Credit / Debit Card",
+      "JazzCash / EasyPaisa",
+    ];
+
+    const finalPaymentMethod = allowedPaymentMethods.includes(
+      paymentMethod
+    )
+      ? paymentMethod
+      : "Cash on Delivery";
+
+    // --------------------------------
+    // CREATE ORDER
+    // --------------------------------
+
     const order = await Order.create({
-      customer,
-      customerName,
-      customerEmail: customerEmail || "",
-      customerPhone: customerPhone || "",
-      restaurant: restaurant || "",
-      items,
-      totalAmount: Number(totalAmount),
-      deliveryAddress: deliveryAddress || "",
+      customer: validCustomer,
+
+      customerName: customerName.trim(),
+
+      customerEmail:
+        typeof customerEmail === "string"
+          ? customerEmail.trim()
+          : "",
+
+      customerPhone:
+        typeof customerPhone === "string"
+          ? customerPhone.trim()
+          : "",
+
+      restaurant:
+        typeof restaurant === "string" && restaurant.trim()
+          ? restaurant.trim()
+          : "FlavorNest",
+
+      items: cleanedItems,
+
+      totalAmount: numericTotal,
+
+      deliveryAddress:
+        typeof deliveryAddress === "string"
+          ? deliveryAddress.trim()
+          : "",
+
+      paymentMethod: finalPaymentMethod,
+
       status: status || "Pending",
     });
 
-    const populatedOrder = await Order.findById(order._id).populate(
+    // --------------------------------
+    // POPULATE CUSTOMER
+    // --------------------------------
+
+    const populatedOrder = await Order.findById(
+      order._id
+    ).populate(
       "customer",
       "name email phone"
     );
 
-    res.status(201).json({
+    console.log("ORDER CREATED:", populatedOrder._id);
+
+    return res.status(201).json({
       success: true,
       message: "Order created successfully",
       order: populatedOrder,
     });
   } catch (error) {
-    console.error("CREATE ORDER ERROR:", error);
+    console.error("=================================");
+    console.error("CREATE ORDER ERROR");
+    console.error(error);
+    console.error("=================================");
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to create order",
       error: error.message,
@@ -140,7 +282,10 @@ const createOrder = async (req, res) => {
   }
 };
 
+// ==============================
 // UPDATE COMPLETE ORDER
+// ==============================
+
 const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -152,10 +297,14 @@ const updateOrder = async (req, res) => {
       });
     }
 
-    const order = await Order.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    }).populate("customer", "name email phone");
+    const order = await Order.findByIdAndUpdate(
+      id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).populate("customer", "name email phone");
 
     if (!order) {
       return res.status(404).json({
@@ -180,7 +329,10 @@ const updateOrder = async (req, res) => {
   }
 };
 
+// ==============================
 // UPDATE ORDER STATUS
+// ==============================
+
 const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -231,7 +383,10 @@ const updateOrderStatus = async (req, res) => {
       order,
     });
   } catch (error) {
-    console.error("UPDATE ORDER STATUS ERROR:", error);
+    console.error(
+      "UPDATE ORDER STATUS ERROR:",
+      error
+    );
 
     res.status(500).json({
       success: false,
@@ -241,7 +396,10 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+// ==============================
 // DELETE ORDER
+// ==============================
+
 const deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
