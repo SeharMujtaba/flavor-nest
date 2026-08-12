@@ -20,19 +20,13 @@ export default function HeroContent() {
           inline-flex
           items-center
           gap-2
-
           rounded-full
-
           border
           border-orange-200
-
           bg-white/80
-
           px-5
           py-2
-
           shadow-sm
-
           backdrop-blur
         "
       >
@@ -54,19 +48,12 @@ export default function HeroContent() {
       <h1
         className="
           mt-8
-
           text-5xl
-
           font-extrabold
-
           leading-[1.05]
-
           tracking-tight
-
           text-slate-900
-
           sm:text-6xl
-
           lg:text-7xl
         "
       >
@@ -88,19 +75,16 @@ export default function HeroContent() {
       <p
         className="
           mt-7
-
           max-w-xl
-
           text-lg
-
           leading-8
-
           text-slate-600
         "
       >
-        Discover the best restaurants near you and enjoy fresh,
-        delicious meals delivered to your doorstep in minutes.
-        Fast delivery, trusted restaurants, and unforgettable taste.
+        Discover the best restaurants near you and enjoy
+        fresh, delicious meals delivered to your doorstep in
+        minutes. Fast delivery, trusted restaurants, and
+        unforgettable taste.
       </p>
 
       {/* Search */}
@@ -108,7 +92,6 @@ export default function HeroContent() {
       <div
         className="
           mt-10
-
           max-w-xl
         "
       >
@@ -119,45 +102,33 @@ export default function HeroContent() {
 
       <div
         className="
-          mt-10
-
+          mt-7
           flex
-          flex-col
-
-          gap-5
-
-          sm:flex-row
-          sm:items-center
+          items-center
+          gap-3
         "
       >
         {/* Order Now */}
 
         <Button
           className="
-            h-14
-            min-w-[170px]
-
+            h-10
             rounded-full
-
             bg-gradient-to-r
             from-orange-500
             to-orange-600
-
-            px-8
-
-            text-base
+            px-5
+            text-sm
             font-bold
-
             text-white
-
-            shadow-lg
+            shadow-md
             shadow-orange-200
-
             transition-all
             duration-300
-
             hover:-translate-y-1
-            hover:shadow-xl
+            hover:shadow-lg
+            sm:h-11
+            sm:px-6
           "
         >
           <Link href="/restaurants">
@@ -168,39 +139,28 @@ export default function HeroContent() {
         {/* Explore Menu */}
 
         <Button
-          variant="outline"
           className="
-            h-14
-            min-w-[170px]
-
+            h-10
             rounded-full
-
-            border-0
-
             bg-gradient-to-r
             from-orange-500
             to-orange-600
-
-            px-8
-
-            text-base
+            px-5
+            text-sm
             font-bold
-
             text-white
-
-            shadow-lg
+            shadow-md
             shadow-orange-200
-
             transition-all
             duration-300
-
             hover:-translate-y-1
-            hover:shadow-xl
-            hover:text-white
+            hover:shadow-lg
+            sm:h-11
+            sm:px-6
           "
         >
-          <Link href="/restaurants">
-            Explore Menu
+          <Link href="/categories">
+            Explore Menu →
           </Link>
         </Button>
       </div>
@@ -209,8 +169,7 @@ export default function HeroContent() {
 
       <div
         className="
-          mt-14
-
+          mt-12
           max-w-xl
         "
       >

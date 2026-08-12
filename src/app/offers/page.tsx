@@ -16,7 +16,7 @@ const offers = [
     description:
       "Enjoy delicious burgers with an amazing 50% discount.",
     image: "/images/offers/burger-offer.jpg",
-    discount: "50%",
+    discount: "50% OFF",
     code: "BURGER50",
   },
   {
@@ -43,52 +43,84 @@ export default function OffersPage() {
   return (
     <main className="min-h-screen bg-[#FAFAF7]">
 
-      {/* Hero */}
+      {/* =====================================================
+          HERO
+      ===================================================== */}
 
-      <section className="bg-gradient-to-r from-orange-500 via-orange-600 to-red-500 py-24">
+      <section className="w-full bg-gradient-to-r from-orange-500 via-orange-600 to-red-500">
+        <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
 
-        <div className="mx-auto max-w-7xl px-6">
-
-          {/* Navigation */}
-
+          {/* Back Button */}
           <Link
             href="/"
             className="
-              mb-10
               inline-flex
               items-center
               gap-2
               rounded-full
-              bg-white/20
-              px-6
-              py-3
+              bg-white/15
+              px-4
+              py-2
+              text-sm
               font-semibold
               text-white
-              backdrop-blur-md
-              transition
+              backdrop-blur-sm
+              transition-all
+              duration-200
               hover:bg-white
-              hover:text-orange-500
+              hover:text-orange-600
             "
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={16} />
             Back to Home
           </Link>
 
-          <div className="max-w-3xl">
+          {/* Hero Content */}
+          <div className="mt-8 max-w-2xl">
 
-            <div className="inline-flex items-center gap-3 rounded-full bg-white/20 px-5 py-2 text-white backdrop-blur-md">
-
-              <Gift size={20} />
-
+            {/* Badge */}
+            <div
+              className="
+                inline-flex
+                items-center
+                gap-2
+                rounded-full
+                bg-white/15
+                px-4
+                py-2
+                text-xs
+                font-bold
+                text-white
+                backdrop-blur-sm
+              "
+            >
+              <Gift size={16} />
               Exclusive Deals
-
             </div>
 
-            <h1 className="mt-8 text-6xl font-extrabold text-white">
+            <h1
+              className="
+                mt-4
+                text-4xl
+                font-extrabold
+                tracking-tight
+                text-white
+                sm:text-5xl
+              "
+            >
               Special Offers
             </h1>
 
-            <p className="mt-6 text-xl leading-9 text-orange-100">
+            <p
+              className="
+                mt-3
+                max-w-xl
+                text-sm
+                leading-6
+                text-orange-100
+                sm:text-base
+              "
+            >
               Save more on every meal with exclusive discounts,
               combo deals and limited-time promotions.
             </p>
@@ -96,193 +128,494 @@ export default function OffersPage() {
             <Link
               href="/restaurants"
               className="
-                mt-10
+                mt-6
                 inline-flex
                 items-center
-                gap-3
-                rounded-xl
+                gap-2
+                rounded-lg
                 bg-white
-                px-8
-                py-4
+                px-5
+                py-2.5
+                text-sm
                 font-bold
                 text-orange-600
-                transition
-                hover:scale-105
+                shadow-md
+                transition-all
+                duration-200
+                hover:-translate-y-0.5
+                hover:shadow-lg
               "
             >
               Order Now
-
-              <ArrowRight size={20} />
+              <ArrowRight size={16} />
             </Link>
 
           </div>
-
         </div>
-
       </section>
 
-      {/* Offers */}
 
-      <section className="py-24">
+      {/* =====================================================
+          OFFERS
+      ===================================================== */}
 
-        <div className="mx-auto max-w-7xl px-6">
+      <section className="w-full bg-[#FAFAF7] py-14">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 
-          <div className="mb-16 text-center">
+          {/* Heading */}
+          <div className="mx-auto mb-10 max-w-2xl text-center">
 
-            <h2 className="text-5xl font-extrabold text-slate-900">
+            <span
+              className="
+                inline-flex
+                rounded-full
+                bg-orange-100
+                px-4
+                py-1.5
+                text-xs
+                font-bold
+                uppercase
+                tracking-wider
+                text-orange-600
+              "
+            >
+              Best Deals
+            </span>
+
+            <h2
+              className="
+                mt-3
+                text-3xl
+                font-extrabold
+                tracking-tight
+                text-slate-900
+                sm:text-4xl
+              "
+            >
               Today&apos;s Best Deals
             </h2>
 
-            <p className="mt-5 text-lg text-slate-500">
-              Don&apos;t miss these amazing discounts.
+            <p
+              className="
+                mx-auto
+                mt-3
+                max-w-lg
+                text-sm
+                leading-6
+                text-slate-500
+              "
+            >
+              Grab your favourite meals at special prices before
+              these offers disappear.
             </p>
 
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
 
+          {/* Offer Cards */}
+          <div
+            className="
+              grid
+              gap-6
+              sm:grid-cols-2
+              lg:grid-cols-3
+            "
+          >
             {offers.map((offer) => (
-
-              <div
+              <article
                 key={offer.id}
                 className="
+                  group
                   overflow-hidden
-                  rounded-3xl
+                  rounded-2xl
+                  border
+                  border-slate-200
                   bg-white
-                  shadow-lg
+                  shadow-sm
                   transition-all
                   duration-300
-                  hover:-translate-y-2
-                  hover:shadow-2xl
+                  hover:-translate-y-1
+                  hover:border-orange-200
+                  hover:shadow-lg
                 "
               >
 
-                <div className="relative h-72">
+                {/* Image */}
+                <div className="relative h-40 overflow-hidden">
 
                   <Image
                     src={offer.image}
                     alt={offer.title}
                     fill
-                    className="object-cover"
+                    sizes="
+                      (max-width: 640px) 100vw,
+                      (max-width: 1024px) 50vw,
+                      33vw
+                    "
+                    className="
+                      object-cover
+                      transition-transform
+                      duration-500
+                      group-hover:scale-105
+                    "
                   />
 
-                  <div className="absolute left-5 top-5 rounded-full bg-red-500 px-5 py-2 font-bold text-white">
+                  {/* Image Overlay */}
+                  <div
+                    className="
+                      absolute
+                      inset-0
+                      bg-gradient-to-t
+                      from-black/40
+                      via-transparent
+                      to-transparent
+                    "
+                  />
 
+                  {/* Discount Badge */}
+                  <div
+                    className="
+                      absolute
+                      left-4
+                      top-4
+                      rounded-full
+                      bg-red-500
+                      px-3
+                      py-1.5
+                      text-xs
+                      font-bold
+                      text-white
+                      shadow-md
+                    "
+                  >
                     {offer.discount}
-
                   </div>
 
                 </div>
 
-                <div className="p-8">
 
-                  <h3 className="text-2xl font-bold text-slate-900">
+                {/* Card Content */}
+                <div className="p-5">
+
+                  <h3
+                    className="
+                      text-lg
+                      font-bold
+                      text-slate-900
+                    "
+                  >
                     {offer.title}
                   </h3>
 
-                  <p className="mt-4 leading-8 text-slate-500">
+                  <p
+                    className="
+                      mt-2
+                      min-h-[44px]
+                      text-sm
+                      leading-6
+                      text-slate-500
+                    "
+                  >
                     {offer.description}
                   </p>
 
-                  <div className="mt-8 flex items-center justify-between">
 
-                    <div className="rounded-xl bg-orange-100 px-5 py-3 font-bold text-orange-600">
-                      {offer.code}
+                  {/* Bottom Row */}
+                  <div
+                    className="
+                      mt-5
+                      flex
+                      items-center
+                      justify-between
+                      gap-3
+                      border-t
+                      border-slate-100
+                      pt-4
+                    "
+                  >
+
+                    {/* Promo Code */}
+                    <div
+                      className="
+                        flex
+                        min-w-0
+                        items-center
+                        gap-1.5
+                        rounded-lg
+                        bg-orange-50
+                        px-3
+                        py-2
+                        text-xs
+                        font-bold
+                        tracking-wide
+                        text-orange-600
+                      "
+                    >
+                      <Ticket
+                        size={14}
+                        className="shrink-0"
+                      />
+
+                      <span className="truncate">
+                        {offer.code}
+                      </span>
                     </div>
 
-                    <button
+
+                    {/* Redeem */}
+                    <Link
+                      href="/restaurants"
                       className="
-                        rounded-xl
+                        inline-flex
+                        shrink-0
+                        items-center
+                        gap-1.5
+                        rounded-lg
                         bg-orange-500
-                        px-6
-                        py-3
-                        font-semibold
+                        px-4
+                        py-2
+                        text-xs
+                        font-bold
                         text-white
-                        transition
+                        transition-all
+                        duration-200
                         hover:bg-orange-600
                       "
                     >
                       Redeem
-                    </button>
+                      <ArrowRight size={14} />
+                    </Link>
 
                   </div>
 
                 </div>
+              </article>
+            ))}
+          </div>
 
+        </div>
+      </section>
+
+
+      {/* =====================================================
+          PROMO CODE
+      ===================================================== */}
+
+      <section className="w-full bg-slate-900 py-12">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+
+          <div
+            className="
+              mx-auto
+              flex
+              max-w-4xl
+              flex-col
+              items-center
+              justify-between
+              gap-6
+              rounded-2xl
+              border
+              border-slate-700
+              bg-slate-800
+              px-6
+              py-7
+              text-center
+              shadow-lg
+              md:flex-row
+              md:text-left
+            "
+          >
+
+            {/* Left */}
+            <div className="flex items-center gap-4">
+
+              <div
+                className="
+                  flex
+                  h-11
+                  w-11
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-orange-500/10
+                "
+              >
+                <Ticket
+                  size={23}
+                  className="text-orange-500"
+                />
               </div>
 
-            ))}
+              <div>
+                <h2
+                  className="
+                    text-xl
+                    font-extrabold
+                    text-white
+                  "
+                >
+                  Extra Savings
+                </h2>
+
+                <p
+                  className="
+                    mt-1
+                    text-sm
+                    text-slate-400
+                  "
+                >
+                  Use this promo code during checkout.
+                </p>
+              </div>
+
+            </div>
+
+
+            {/* Code */}
+            <div
+              className="
+                rounded-xl
+                border-2
+                border-dashed
+                border-orange-500
+                bg-slate-900
+                px-6
+                py-3
+                text-xl
+                font-extrabold
+                tracking-[0.18em]
+                text-orange-400
+              "
+            >
+              FLAVOR25
+            </div>
 
           </div>
 
         </div>
-
       </section>
 
-      {/* Promo Code */}
 
-      <section className="bg-slate-900 py-24">
+      {/* =====================================================
+          LIMITED OFFER
+      ===================================================== */}
 
-        <div className="mx-auto max-w-5xl px-6 text-center">
+      <section className="w-full bg-[#FAFAF7] py-12">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 
-          <Ticket
-            size={70}
-            className="mx-auto text-orange-500"
-          />
+          <div
+            className="
+              relative
+              overflow-hidden
+              bg-gradient-to-r
+              from-orange-500
+              to-red-500
+              px-6
+              py-9
+              text-center
+              text-white
+              shadow-lg
+              sm:px-10
+            "
+          >
 
-          <h2 className="mt-8 text-5xl font-extrabold text-white">
-            Promo Code
-          </h2>
-
-          <p className="mt-6 text-lg leading-8 text-slate-300">
-            Use this promo code during checkout and enjoy
-            additional savings.
-          </p>
-
-          <div className="mx-auto mt-10 max-w-md rounded-2xl border-2 border-dashed border-orange-500 bg-slate-800 py-6 text-center text-4xl font-extrabold tracking-widest text-orange-400">
-
-            FLAVOR25
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* Limited Offer */}
-
-      <section className="py-24">
-
-        <div className="mx-auto max-w-6xl px-6">
-
-          <div className="rounded-3xl bg-gradient-to-r from-orange-500 to-red-500 px-10 py-16 text-center text-white shadow-xl">
-
-            <Clock3
-              size={70}
-              className="mx-auto"
+            {/* Decorative Glow */}
+            <div
+              className="
+                pointer-events-none
+                absolute
+                -right-20
+                -top-20
+                h-48
+                w-48
+                rounded-full
+                bg-white/10
+                blur-3xl
+              "
             />
 
-            <h2 className="mt-8 text-5xl font-extrabold">
-              Limited Time Offer
-            </h2>
+            <div
+              className="
+                relative
+                mx-auto
+                flex
+                max-w-3xl
+                flex-col
+                items-center
+              "
+            >
 
-            <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-orange-100">
-              Hurry! These offers expire soon.
-              Order today and enjoy massive savings.
-            </p>
+              {/* Icon */}
+              <div
+                className="
+                  flex
+                  h-11
+                  w-11
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-white/15
+                "
+              >
+                <Clock3 size={23} />
+              </div>
 
-            <div className="mt-10 inline-flex items-center gap-3 rounded-xl bg-white px-8 py-4 font-bold text-orange-600">
+              <h2
+                className="
+                  mt-4
+                  text-2xl
+                  font-extrabold
+                  sm:text-3xl
+                "
+              >
+                Limited Time Offer
+              </h2>
 
-              <Percent size={22} />
+              <p
+                className="
+                  mt-2
+                  max-w-xl
+                  text-sm
+                  leading-6
+                  text-orange-100
+                "
+              >
+                Hurry! These offers expire soon. Order today
+                and enjoy massive savings.
+              </p>
 
-              Save Up To 50%
+              <Link
+                href="/restaurants"
+                className="
+                  mt-5
+                  inline-flex
+                  items-center
+                  gap-2
+                  rounded-lg
+                  bg-white
+                  px-5
+                  py-2.5
+                  text-sm
+                  font-bold
+                  text-orange-600
+                  shadow-md
+                  transition-all
+                  duration-200
+                  hover:-translate-y-0.5
+                  hover:shadow-lg
+                "
+              >
+                <Percent size={16} />
+                Save Up To 50%
+                <ArrowRight size={15} />
+              </Link>
 
             </div>
 
           </div>
 
         </div>
-
       </section>
 
     </main>

@@ -1,40 +1,38 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 type CategoryCardProps = {
   title: string;
   image: string;
   description: string;
+  href: string;
 };
 
 export default function CategoryCard({
   title,
   image,
   description,
+  href,
 }: CategoryCardProps) {
   return (
-    <div
+    <Link
+      href={href}
       className="
         group
+        block
         relative
         cursor-pointer
         overflow-hidden
-
         rounded-[28px]
-
         border
         border-slate-200/70
-
         bg-white/90
-
         backdrop-blur-sm
-
         shadow-md
         shadow-orange-100/40
-
         transition-all
         duration-500
-
         hover:-translate-y-3
         hover:border-orange-200
         hover:shadow-2xl
@@ -67,7 +65,6 @@ export default function CategoryCard({
           className="
             absolute
             inset-0
-
             bg-gradient-to-t
             from-black/30
             via-transparent
@@ -78,30 +75,24 @@ export default function CategoryCard({
 
       {/* Content */}
       <div className="relative p-6">
+        {/* Arrow Button */}
         <div
           className="
             absolute
             -top-7
             right-6
-
             flex
             h-14
             w-14
             items-center
             justify-center
-
             rounded-2xl
-
             bg-orange-500
-
             text-white
-
             shadow-lg
             shadow-orange-300
-
             transition-all
             duration-300
-
             group-hover:scale-110
             group-hover:rotate-12
           "
@@ -114,10 +105,8 @@ export default function CategoryCard({
             text-2xl
             font-bold
             text-slate-900
-
             transition-colors
             duration-300
-
             group-hover:text-orange-500
           "
         >
@@ -127,10 +116,8 @@ export default function CategoryCard({
         <p
           className="
             mt-3
-
             text-base
             leading-7
-
             text-slate-600
           "
         >
@@ -140,18 +127,13 @@ export default function CategoryCard({
         <div
           className="
             mt-6
-
             inline-flex
             items-center
             gap-2
-
             font-semibold
-
             text-orange-500
-
             transition-all
             duration-300
-
             group-hover:gap-3
           "
         >
@@ -166,6 +148,6 @@ export default function CategoryCard({
           />
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

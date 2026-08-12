@@ -6,31 +6,37 @@ const categories = [
     title: "Burgers",
     description: "Juicy burgers & combos",
     image: "/images/categories/burger.jpg",
+    href: "/restaurants/1",
   },
   {
     title: "Pizza",
     description: "Fresh cheesy pizzas",
     image: "/images/categories/pizza.jpg",
+    href: "/restaurants/2",
   },
   {
     title: "Asian",
     description: "Noodles & Asian cuisine",
     image: "/images/categories/asian.jpg",
+    href: "/restaurants/4",
   },
   {
     title: "Desserts",
     description: "Sweet treats & cakes",
     image: "/images/categories/dessert.jpg",
+    href: "/restaurants/5",
   },
   {
     title: "Healthy",
     description: "Fresh healthy meals",
     image: "/images/categories/healthy.jpg",
+    href: "/restaurants",
   },
   {
     title: "Drinks",
     description: "Cold drinks & juices",
     image: "/images/categories/drinks.jpg",
+    href: "/restaurants/5",
   },
 ];
 
@@ -40,12 +46,10 @@ export default function Categories() {
       className="
         relative
         overflow-hidden
-
         bg-gradient-to-b
         from-[#FFFDFB]
         via-[#FFF9F5]
         to-[#FFF5EE]
-
         pt-36
         pb-36
       "
@@ -56,14 +60,10 @@ export default function Categories() {
           absolute
           -top-24
           -left-24
-
           h-[320px]
           w-[320px]
-
           rounded-full
-
           bg-orange-200/25
-
           blur-[140px]
         "
       />
@@ -74,14 +74,10 @@ export default function Categories() {
           absolute
           -right-24
           bottom-0
-
           h-[360px]
           w-[360px]
-
           rounded-full
-
           bg-yellow-200/25
-
           blur-[150px]
         "
       />
@@ -112,19 +108,13 @@ export default function Categories() {
             className="
               inline-flex
               items-center
-
               rounded-[5px]
-
               bg-orange-500
-
               px-5
               py-2.5
-
               text-lg
               font-bold
-
               tracking-wide
-
               text-white
             "
           >
@@ -134,19 +124,19 @@ export default function Categories() {
           <h2
             className="
               mt-7
-
               text-4xl
               font-extrabold
               leading-tight
-
               text-slate-900
-
               md:text-5xl
               lg:text-6xl
             "
           >
             Choose Your
-            <span className="text-orange-500"> Favorite Food</span>
+            <span className="text-orange-500">
+              {" "}
+              Favorite Food
+            </span>
           </h2>
 
           <p
@@ -154,17 +144,15 @@ export default function Categories() {
               mx-auto
               mt-6
               max-w-6xl
-
-              text-align-center
+              text-center
               text-lg
               leading-8
-
               text-slate-600
             "
           >
             Explore delicious meals from different cuisines prepared by
-            Pakistan&apos;s top restaurants. From burgers and pizzas to healthy
-            meals and desserts, find your next favorite dish.
+            Pakistan&apos;s top restaurants. From burgers and pizzas to
+            healthy meals and desserts, find your next favorite dish.
           </p>
         </div>
 
@@ -173,12 +161,9 @@ export default function Categories() {
           className="
             relative
             z-10
-
             mt-20
-
             grid
             gap-8
-
             sm:grid-cols-2
             lg:grid-cols-3
           "
@@ -186,7 +171,10 @@ export default function Categories() {
           {categories.map((item) => (
             <CategoryCard
               key={item.title}
-              {...item}
+              title={item.title}
+              description={item.description}
+              image={item.image}
+              href={item.href}
             />
           ))}
         </div>

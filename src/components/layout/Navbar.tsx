@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -15,6 +14,7 @@ import Logo from "./Logo";
 import NavLinks from "./NavLinks";
 import MobileMenu from "./MobileMenu";
 import MobileDrawer from "./MobileDrawer";
+import { useState } from "react";
 
 export default function Navbar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -24,8 +24,9 @@ export default function Navbar() {
   const iconButton = `
     relative
     flex
-    h-11
-    w-11
+    h-10
+    w-10
+    shrink-0
     items-center
     justify-center
     rounded-full
@@ -43,6 +44,8 @@ export default function Navbar() {
     hover:text-white
     hover:shadow-lg
     hover:shadow-orange-200
+    sm:h-11
+    sm:w-11
   `;
 
   return (
@@ -54,22 +57,27 @@ export default function Navbar() {
           z-50
           border-b
           border-slate-200/70
-          bg-white/80
-          backdrop-blur-xl
+          bg-white/90
           shadow-sm
+          backdrop-blur-xl
         "
       >
         <Container>
           <div
             className="
               flex
-              h-20
+              min-h-16
               items-center
               justify-between
+              gap-2
+              py-2
+              sm:min-h-20
+              sm:gap-4
+              sm:py-0
             "
           >
-            {/* Left */}
-            <div className="flex items-center gap-3">
+            {/* LEFT SIDE */}
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <MobileMenu
                 onOpen={() => setIsDrawerOpen(true)}
               />
@@ -77,28 +85,30 @@ export default function Navbar() {
               <Logo />
             </div>
 
-            {/* Center */}
+            {/* DESKTOP NAVIGATION */}
             <NavLinks />
 
-            {/* Right */}
-            <div className="flex items-center gap-3">
+            {/* RIGHT SIDE */}
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
 
-              {/* Search */}
+              {/* SEARCH */}
               <Link
                 href="/restaurants"
                 className={iconButton}
                 aria-label="Search Restaurants"
+                title="Search Restaurants"
               >
-                <Search size={20} />
+                <Search size={19} />
               </Link>
 
-              {/* Cart */}
+              {/* CART */}
               <Link
                 href="/cart"
                 className={iconButton}
                 aria-label="Shopping Cart"
+                title="Shopping Cart"
               >
-                <ShoppingCart size={20} />
+                <ShoppingCart size={19} />
 
                 {totalItems > 0 && (
                   <span
@@ -108,11 +118,12 @@ export default function Navbar() {
                       -top-1
                       flex
                       h-5
-                      w-5
+                      min-w-5
                       items-center
                       justify-center
                       rounded-full
                       bg-orange-500
+                      px-1
                       text-[10px]
                       font-bold
                       text-white
@@ -123,21 +134,21 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* Admin Login */}
+              {/* ADMIN LOGIN */}
               <Link
                 href="/admin/login"
-                className={iconButton}
+                className={`${iconButton} hidden sm:flex`}
                 aria-label="Admin Login"
                 title="Admin Login"
               >
-                <User size={20} />
+                <User size={19} />
               </Link>
-
             </div>
           </div>
         </Container>
       </header>
 
+      {/* MOBILE DRAWER */}
       <MobileDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}

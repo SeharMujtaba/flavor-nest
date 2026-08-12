@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import {
   Globe,
   MapPin,
@@ -11,19 +12,49 @@ import Container from "../common/Container";
 import Logo from "./Logo";
 
 const quickLinks = [
-  "Home",
-  "Restaurants",
-  "Categories",
-  "Offers",
-  "Contact",
+  {
+    name: "Home",
+    href: "/",
+  },
+  {
+    name: "Restaurants",
+    href: "/restaurants",
+  },
+  {
+    name: "Categories",
+    href: "/categories",
+  },
+  {
+    name: "Offers",
+    href: "/offers",
+  },
+  {
+    name: "Contact",
+    href: "/contact",
+  },
 ];
 
 const categories = [
-  "Burgers",
-  "Pizza",
-  "Biryani",
-  "Chinese",
-  "Desserts",
+  {
+    name: "Burgers",
+    href: "/categories?category=Burgers",
+  },
+  {
+    name: "Pizza",
+    href: "/categories?category=Pizza",
+  },
+  {
+    name: "Biryani",
+    href: "/categories?category=Biryani",
+  },
+  {
+    name: "Chinese",
+    href: "/categories?category=Chinese",
+  },
+  {
+    name: "Desserts",
+    href: "/categories?category=Desserts",
+  },
 ];
 
 export default function Footer() {
@@ -33,31 +64,28 @@ export default function Footer() {
       className="
         relative
         overflow-hidden
-
         bg-slate-700
-
+        pt-16
         text-white
-
-        pt-24
-        pb-10
+        sm:pt-20
+        lg:pt-24
       "
     >
-      {/* Background Glow */}
-
+      {/* BACKGROUND GLOW */}
       <div
         className="
+          pointer-events-none
           absolute
+          -right-20
           -top-32
-          right-0
-
-          h-80
-          w-80
-
+          h-72
+          w-72
           rounded-full
-
           bg-orange-500/10
-
-          blur-[120px]
+          blur-[100px]
+          sm:-right-10
+          sm:h-80
+          sm:w-80
         "
       />
 
@@ -65,174 +93,217 @@ export default function Footer() {
         <div
           className="
             grid
-            gap-14
-
+            gap-12
+            sm:gap-14
             md:grid-cols-2
             lg:grid-cols-4
+            lg:gap-10
+            xl:gap-14
           "
         >
-          {/* Logo */}
-
-          <div>
+          {/* LOGO / ABOUT */}
+          <div className="md:col-span-2 lg:col-span-1">
             <Logo />
 
             <p
               className="
-                mt-6
-
-                leading-8
-
+                mt-5
+                max-w-md
+                text-sm
+                leading-7
                 text-slate-400
+                sm:mt-6
+                sm:text-base
+                sm:leading-8
               "
             >
-              FlavorNest helps you discover Pakistan&apos;s best restaurants
-              and enjoy delicious meals delivered fresh to your doorstep.
+              FlavorNest helps you discover Pakistan&apos;s
+              best restaurants and enjoy delicious meals
+              delivered fresh to your doorstep.
             </p>
 
-            <div className="mt-8 flex gap-4">
-              {[Globe, Heart].map((Icon, index) => (
-                <button
-                  key={index}
-                  className="
-                    flex
-                    h-11
-                    w-11
+            <div className="mt-7 flex gap-3 sm:mt-8 sm:gap-4">
+              <button
+                type="button"
+                aria-label="Website"
+                className="
+                  flex
+                  h-10
+                  w-10
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-slate-900
+                  transition-all
+                  duration-300
+                  hover:-translate-y-1
+                  hover:bg-orange-500
+                  sm:h-11
+                  sm:w-11
+                "
+              >
+                <Globe size={18} />
+              </button>
 
-                    items-center
-                    justify-center
-
-                    rounded-full
-
-                    bg-slate-900
-
-                    transition-all
-                    duration-300
-
-                    hover:-translate-y-1
-                    hover:bg-orange-500
-                  "
-                >
-                  <Icon size={18} />
-                </button>
-              ))}
+              <button
+                type="button"
+                aria-label="Favorite"
+                className="
+                  flex
+                  h-10
+                  w-10
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-slate-900
+                  transition-all
+                  duration-300
+                  hover:-translate-y-1
+                  hover:bg-orange-500
+                  sm:h-11
+                  sm:w-11
+                "
+              >
+                <Heart size={18} />
+              </button>
             </div>
           </div>
 
-          {/* Quick Links */}
-
+          {/* QUICK LINKS */}
           <div>
-            <h3 className="text-xl font-bold">
+            <h3 className="text-lg font-bold sm:text-xl">
               Quick Links
             </h3>
 
-            <ul className="mt-8 space-y-4">
+            <ul className="mt-5 space-y-3 sm:mt-8 sm:space-y-4">
               {quickLinks.map((item) => (
-                <li key={item}>
+                <li key={item.name}>
                   <Link
-                    href="/"
+                    href={item.href}
                     className="
+                      inline-block
+                      text-sm
                       text-slate-400
-
-                      transition
-
-                      hover:pl-2
+                      transition-all
+                      duration-200
+                      hover:translate-x-1
                       hover:text-orange-400
+                      sm:text-base
                     "
                   >
-                    {item}
+                    {item.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Categories */}
-
+          {/* CATEGORIES */}
           <div>
-            <h3 className="text-xl font-bold">
+            <h3 className="text-lg font-bold sm:text-xl">
               Categories
             </h3>
 
-            <ul className="mt-8 space-y-4">
+            <ul className="mt-5 space-y-3 sm:mt-8 sm:space-y-4">
               {categories.map((item) => (
-                <li
-                  key={item}
-                  className="
-                    text-slate-400
-
-                    transition
-
-                    hover:pl-2
-                    hover:text-orange-400
-                  "
-                >
-                  {item}
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className="
+                      inline-block
+                      text-sm
+                      text-slate-400
+                      transition-all
+                      duration-200
+                      hover:translate-x-1
+                      hover:text-orange-400
+                      sm:text-base
+                    "
+                  >
+                    {item.name}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact */}
-
+          {/* CONTACT */}
           <div>
-            <h3 className="text-xl font-bold">
+            <h3 className="text-lg font-bold sm:text-xl">
               Contact
             </h3>
 
-            <div className="mt-8 space-y-6">
-              <div className="flex gap-4">
+            <div className="mt-5 space-y-5 sm:mt-8 sm:space-y-6">
+              <div className="flex items-start gap-3 sm:gap-4">
                 <MapPin
-                  className="mt-1 text-orange-500"
-                  size={20}
+                  className="mt-1 shrink-0 text-orange-500"
+                  size={19}
                 />
 
-                <span className="text-slate-400">
+                <span className="text-sm leading-6 text-slate-400 sm:text-base">
                   Islamabad, Pakistan
                 </span>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
                 <Phone
-                  className="text-orange-500"
-                  size={20}
+                  className="mt-1 shrink-0 text-orange-500"
+                  size={19}
                 />
 
-                <span className="text-slate-400">
+                <a
+                  href="tel:+923001234567"
+                  className="
+                    text-sm
+                    text-slate-400
+                    transition
+                    hover:text-orange-400
+                    sm:text-base
+                  "
+                >
                   +92 300 1234567
-                </span>
+                </a>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
                 <Mail
-                  className="text-orange-500"
-                  size={20}
+                  className="mt-1 shrink-0 text-orange-500"
+                  size={19}
                 />
 
-                <span className="text-slate-400">
+                <a
+                  href="mailto:info@flavornest.pk"
+                  className="
+                    break-all
+                    text-sm
+                    text-slate-400
+                    transition
+                    hover:text-orange-400
+                    sm:text-base
+                  "
+                >
                   info@flavornest.pk
-                </span>
+                </a>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom */}
-
+        {/* BOTTOM */}
         <div
           className="
-            mt-20
-
+            mt-14
             border-t
-            border-slate-800
-
-            pt-8
-
+            border-slate-600
+            py-7
             text-center
-
-            text-slate-500
+            sm:mt-20
+            sm:py-8
           "
         >
-          © 2026 FlavorNest. All Rights Reserved.
+          <p className="text-xs text-slate-500 sm:text-sm">
+            © 2026 FlavorNest. All Rights Reserved.
+          </p>
         </div>
       </Container>
     </footer>
