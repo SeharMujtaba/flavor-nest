@@ -9,9 +9,7 @@ import {
   LayoutDashboard,
   Package,
   ShoppingBag,
-  Users,
   Settings,
-  BarChart3,
   ChefHat,
   LogOut,
   Menu,
@@ -37,16 +35,6 @@ const navigation = [
     name: "Orders",
     href: "/admin/orders",
     icon: ShoppingBag,
-  },
-  {
-    name: "Customers",
-    href: "/admin/customers",
-    icon: Users,
-  },
-  {
-    name: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
   },
   {
     name: "Settings",
