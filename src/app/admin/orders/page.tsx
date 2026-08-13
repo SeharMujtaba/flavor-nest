@@ -3,7 +3,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Eye, RefreshCw } from "lucide-react";
+import {
+  Eye,
+  RefreshCw,
+  Trash2,
+  Loader2,
+} from "lucide-react";
 
 type Order = {
   _id: string;
@@ -17,7 +22,8 @@ type Order = {
 };
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://flavor-nest-403w.onrender.com";
 
 const statusClasses: Record<string, string> = {
   Delivered: "bg-green-100 text-green-600",
@@ -32,6 +38,9 @@ export default function OrdersPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // NEW: track which order is being deleted
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // -------------------------
   // Fetch orders
@@ -71,6 +80,79 @@ export default function OrdersPage() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  // -------------------------
+  // DELETE ORDER
+  // -------------------------
+
+  const handleDelete = async (order: Order) => {
+    const normalizedStatus = order.status
+      ?.trim()
+      .toLowerCase();
+
+    // Safety check
+    if (
+      normalizedStatus !== "delivered" &&
+      normalizedStatus !== "cancelled"
+    ) {
+      alert(
+        "Only delivered or cancelled orders can be deleted."
+      );
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete order #${order._id
+        .slice(-6)
+        .toUpperCase()}?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingId(order._id);
+      setError("");
+
+      const response = await fetch(
+        `${API_URL}/api/orders/${order._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to delete order"
+        );
+      }
+
+      // Remove deleted order from current UI
+      setOrders((previousOrders) =>
+        previousOrders.filter(
+          (item) => item._id !== order._id
+        )
+      );
+
+      alert("Order deleted successfully.");
+    } catch (error) {
+      console.error("DELETE ORDER ERROR:", error);
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete order."
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   // -------------------------
   // Search
@@ -161,7 +243,8 @@ export default function OrdersPage() {
         <button
           type="button"
           onClick={fetchOrders}
-          className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:border-orange-400 hover:text-orange-500"
+          disabled={deletingId !== null}
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:border-orange-400 hover:text-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <RefreshCw size={18} />
           Refresh
@@ -174,7 +257,7 @@ export default function OrdersPage() {
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-600">
           <p className="font-semibold">
-            Failed to load orders
+            Failed to process request
           </p>
 
           <p className="mt-1 text-sm">
@@ -275,103 +358,155 @@ export default function OrdersPage() {
 
             {filteredOrders.length > 0 ? (
 
-              filteredOrders.map((order) => (
+              filteredOrders.map((order) => {
 
-                <tr
-                  key={order._id}
-                  className="border-t border-slate-200 transition hover:bg-slate-50"
-                >
+                const normalizedStatus = order.status
+                  ?.trim()
+                  .toLowerCase();
 
-                  {/* Order ID */}
+                const canDelete =
+                  normalizedStatus === "delivered" ||
+                  normalizedStatus === "cancelled";
 
-                  <td className="p-5">
+                const isDeleting =
+                  deletingId === order._id;
 
-                    <span className="font-semibold text-slate-900">
-                      #{order._id.slice(-6).toUpperCase()}
-                    </span>
+                return (
+                  <tr
+                    key={order._id}
+                    className="border-t border-slate-200 transition hover:bg-slate-50"
+                  >
 
-                  </td>
+                    {/* Order ID */}
 
-                  {/* Customer */}
+                    <td className="p-5">
+                      <span className="font-semibold text-slate-900">
+                        #{order._id.slice(-6).toUpperCase()}
+                      </span>
+                    </td>
 
-                  <td className="p-5">
+                    {/* Customer */}
 
-                    <div>
-                      <p className="font-semibold text-slate-900">
-                        {order.customerName}
-                      </p>
-
-                      {order.customerEmail && (
-                        <p className="mt-1 text-sm text-slate-500">
-                          {order.customerEmail}
+                    <td className="p-5">
+                      <div>
+                        <p className="font-semibold text-slate-900">
+                          {order.customerName}
                         </p>
-                      )}
-                    </div>
 
-                  </td>
+                        {order.customerEmail && (
+                          <p className="mt-1 text-sm text-slate-500">
+                            {order.customerEmail}
+                          </p>
+                        )}
+                      </div>
+                    </td>
 
-                  {/* Restaurant */}
+                    {/* Restaurant */}
 
-                  <td className="p-5">
-                    {order.restaurant || "—"}
-                  </td>
+                    <td className="p-5">
+                      {order.restaurant || "—"}
+                    </td>
 
-                  {/* Amount */}
+                    {/* Amount */}
 
-                  <td className="p-5 font-bold text-slate-900">
-                    {formatAmount(order.totalAmount)}
-                  </td>
+                    <td className="p-5 font-bold text-slate-900">
+                      {formatAmount(order.totalAmount)}
+                    </td>
 
-                  {/* Status */}
+                    {/* Status */}
 
-                  <td className="p-5">
+                    <td className="p-5">
 
-                    <span
-                      className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                        statusClasses[order.status] ||
-                        "bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-
-                  </td>
-
-                  {/* Date */}
-
-                  <td className="p-5 text-slate-600">
-                    {formatDate(order.createdAt)}
-                  </td>
-
-                  {/* Action */}
-
-                  <td className="p-5">
-
-                    <div className="flex justify-center">
-
-                      <Link
-                        href={`/admin/orders/${order._id}`}
-                        title="View order"
-                        className="
-                          rounded-lg
-                          bg-orange-100
-                          p-2
-                          text-orange-500
-                          transition
-                          hover:bg-orange-500
-                          hover:text-white
-                        "
+                      <span
+                        className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                          statusClasses[order.status] ||
+                          "bg-slate-100 text-slate-600"
+                        }`}
                       >
-                        <Eye size={18} />
-                      </Link>
+                        {order.status}
+                      </span>
 
-                    </div>
+                    </td>
 
-                  </td>
+                    {/* Date */}
 
-                </tr>
+                    <td className="p-5 text-slate-600">
+                      {formatDate(order.createdAt)}
+                    </td>
 
-              ))
+                    {/* Action */}
+
+                    <td className="p-5">
+
+                      <div className="flex items-center justify-center gap-2">
+
+                        {/* View */}
+
+                        <Link
+                          href={`/admin/orders/${order._id}`}
+                          title="View order"
+                          className="
+                            rounded-lg
+                            bg-orange-100
+                            p-2
+                            text-orange-500
+                            transition
+                            hover:bg-orange-500
+                            hover:text-white
+                          "
+                        >
+                          <Eye size={18} />
+                        </Link>
+
+                        {/* Delete */}
+
+                        <button
+                          type="button"
+                          title={
+                            canDelete
+                              ? "Delete order"
+                              : "Only delivered or cancelled orders can be deleted"
+                          }
+                          disabled={
+                            !canDelete ||
+                            isDeleting
+                          }
+                          onClick={() =>
+                            handleDelete(order)
+                          }
+                          className={`
+                            rounded-lg
+                            p-2
+                            transition
+                            ${
+                              canDelete
+                                ? "bg-red-100 text-red-500 hover:bg-red-500 hover:text-white"
+                                : "cursor-not-allowed bg-slate-100 text-slate-300"
+                            }
+                            ${
+                              isDeleting
+                                ? "cursor-wait opacity-60"
+                                : ""
+                            }
+                          `}
+                        >
+                          {isDeleting ? (
+                            <Loader2
+                              size={18}
+                              className="animate-spin"
+                            />
+                          ) : (
+                            <Trash2 size={18} />
+                          )}
+                        </button>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+                );
+              })
 
             ) : (
 
