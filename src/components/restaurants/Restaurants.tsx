@@ -36,7 +36,7 @@ export default function Restaurants() {
 
         const API_URL =
           process.env.NEXT_PUBLIC_API_URL ||
-          "http://localhost:5000";
+          "https://flavor-nest-403w.onrender.com";
 
         const response = await fetch(
           `${API_URL}/api/products`
